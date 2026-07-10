@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowRight } from "lucide-react"
 
 const phoneSchema = z.object({
-  country: z.string({ required_error: "Country is required" }),
+  country: z.string({ message: "Country is required" }),
   phone: z.string().min(10, "Valid phone number is required"),
 })
 

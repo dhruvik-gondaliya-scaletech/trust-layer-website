@@ -18,7 +18,7 @@ const personalSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
   dob: z.string().min(1, "Date of birth is required"),
-  role: z.string({ required_error: "Please select your role" }),
+  role: z.string({ message: "Please select your role" }),
   ssn: z.string().regex(/^\d{4}$/, "Must be the last 4 digits"),
 })
 

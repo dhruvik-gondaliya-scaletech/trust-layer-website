@@ -18,7 +18,7 @@ const bankSchema = z.object({
   accountName: z.string().min(2, "Account holder name is required"),
   routingNumber: z.string().length(9, "Routing number must be 9 digits"),
   accountNumber: z.string().min(8, "Invalid account number"),
-  accountType: z.string({ required_error: "Please select account type" }),
+  accountType: z.string({ message: "Please select account type" }),
 })
 
 type BankFormValues = z.infer<typeof bankSchema>

@@ -1,12 +1,13 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { UploadCloud, FileText, CheckCircle2, X } from "lucide-react"
+import { UploadCloud, FileText, CheckCircle2, X, ArrowLeft } from "lucide-react"
 
 interface IdentityVerificationFormProps {
   onNext: () => void
+  onBack: () => void
 }
 
-export function IdentityVerificationForm({ onNext }: IdentityVerificationFormProps) {
+export function IdentityVerificationForm({ onNext, onBack }: IdentityVerificationFormProps) {
   const [file, setFile] = useState<File | null>(null)
 
   const handleDragOver = (e: React.DragEvent) => {

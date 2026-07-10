@@ -29,11 +29,11 @@ export function OnboardingPage() {
       case 1:
         return <CompanyDetailsForm onNext={nextStep} />
       case 2:
-        return <PersonalVerificationForm onNext={nextStep} />
+        return <PersonalVerificationForm onNext={nextStep} onBack={prevStep} />
       case 3:
-        return <IdentityVerificationForm onNext={nextStep} />
+        return <IdentityVerificationForm onNext={nextStep} onBack={prevStep} />
       case 4:
-        return <BankAccountForm onNext={nextStep} />
+        return <BankAccountForm onNext={nextStep} onBack={prevStep} />
       case 5:
         return <TrustScoreView onComplete={handleComplete} />
       default:
@@ -76,15 +76,12 @@ export function OnboardingPage() {
   const { title, description } = getStepTitleAndDescription()
 
   // Presentation only — the flow (steps 1→5, next/back) is unchanged.
-  const canGoBack = currentStep > 1 && currentStep < 5
 
   return (
     <OnboardingLayout
       currentStep={currentStep}
       title={title}
       description={description}
-      showHeader={currentStep < 5}
-      onBack={canGoBack ? prevStep : undefined}
     >
       {renderStepContent()}
     </OnboardingLayout>

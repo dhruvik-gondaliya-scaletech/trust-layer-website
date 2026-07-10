@@ -16,8 +16,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const companySchema = z.object({
   legalName: z.string().min(2, "Company name is required"),
   registrationNumber: z.string().min(2, "Registration number is required"),
-  industry: z.string({ required_error: "Please select an industry" }),
-  companySize: z.string({ required_error: "Please select company size" }),
+  industry: z.string({ message: "Please select an industry" }),
+  companySize: z.string({ message: "Please select company size" }),
   addressLine1: z.string().min(5, "Address is required"),
   city: z.string().min(2, "City is required"),
   state: z.string().min(2, "State/Province is required"),
