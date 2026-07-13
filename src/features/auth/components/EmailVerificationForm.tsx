@@ -15,7 +15,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp"
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2, ShieldCheck } from "lucide-react"
 
 const otpSchema = z.object({
   pin: z.string().min(6, {
@@ -73,7 +73,23 @@ export function EmailVerificationForm({ onNext }: EmailVerificationFormProps) {
           )}
         />
 
-        <div className="pt-4">
+        <div className="pt-2">
+          <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900 rounded-xl p-4 mb-4 text-left">
+            <div className="font-medium mb-2 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-blue-500" />
+              Why verify your email?
+            </div>
+            <p className="text-sm text-muted-foreground mb-2">
+              We need to confirm your email so we can:
+            </p>
+            <ul className="space-y-1 text-sm text-muted-foreground list-disc pl-4">
+              <li>Send transaction updates</li>
+              <li>Send deal notifications</li>
+              <li>Protect your account</li>
+              <li>Recover your account securely</li>
+            </ul>
+          </div>
+
           <Button type="submit" size="lg" className="w-full h-12 text-base" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Continue

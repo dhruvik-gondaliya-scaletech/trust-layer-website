@@ -2,6 +2,7 @@ import { useState } from "react"
 import { BrowserRouter, Routes, Route, Link as RouterLink } from "react-router-dom"
 import { LandingPage } from "./pages/marketing/LandingPage"
 import { RegistrationFlowPage } from "./pages/auth/RegistrationFlowPage"
+import { RegisterPage } from "./pages/auth/RegisterPage"
 import { LoginPage } from "./pages/auth/LoginPage"
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage"
 import { OTPVerificationPage } from "./pages/auth/OTPVerificationPage"
@@ -264,7 +265,8 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/components" element={<Showcase />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegistrationFlowPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/verify-account" element={<RegistrationFlowPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-otp" element={<OTPVerificationPage />} />
         <Route path="/verify-email" element={<EmailVerificationPage />} />

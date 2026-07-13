@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -51,9 +52,12 @@ export function ProfileSetupForm({ onNext }: ProfileSetupFormProps) {
           <span className="text-sm font-medium text-primary cursor-pointer hover:underline">
             Upload Photo
           </span>
+          <p className="text-sm text-muted-foreground text-center">
+            Optional<br />Upload a profile photo to build trust with buyers and sellers.
+          </p>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           <FormField
             control={form.control}
             name="username"
@@ -63,6 +67,7 @@ export function ProfileSetupForm({ onNext }: ProfileSetupFormProps) {
                 <FormControl>
                   <Input placeholder="johndoe" className="h-12" {...field} />
                 </FormControl>
+                <FormDescription>Choose a unique public username.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -81,6 +86,7 @@ export function ProfileSetupForm({ onNext }: ProfileSetupFormProps) {
                     {...field} 
                   />
                 </FormControl>
+                <FormDescription>Share a short introduction about yourself. Example: Collector of vintage cameras and photography gear.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

@@ -17,7 +17,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 md:px-6 lg:px-8">
+      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-4 md:px-6 lg:px-8">
         
         {/* Left Section: Logo & Mobile Menu */}
         <div className="flex items-center gap-4">
@@ -70,8 +70,11 @@ export function Header() {
         <div className="flex items-center gap-2 lg:gap-4">
           <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-foreground">
             <Bell className="h-5 w-5" />
-            {/* Notification Badge Example */}
-            <span className="absolute top-1.5 right-2 h-2 w-2 rounded-full bg-destructive" />
+            {/* Notification Badge — pulsing */}
+            <span className="absolute right-2 top-1.5 flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive" />
+            </span>
             <span className="sr-only">Notifications</span>
           </Button>
 
