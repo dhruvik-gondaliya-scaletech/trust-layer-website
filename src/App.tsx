@@ -11,6 +11,7 @@ import { OnboardingPage } from "./pages/onboarding/OnboardingPage"
 import { DashboardPage } from "./pages/dashboard/DashboardPage"
 import { DealsPage } from "./pages/deals/DealsPage"
 import { DealDetailsPage } from "./pages/deals/DealDetailsPage"
+import { CreateDealPage } from "./pages/deals/CreateDealPage"
 import { PaymentsPage } from "./pages/payments/PaymentsPage"
 import { MainLayout } from "./components/layout/MainLayout"
 import { Button } from "./components/ui/button"
@@ -273,6 +274,7 @@ function App() {
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/deals" element={<DealsPage />} />
+        <Route path="/deals/new" element={<CreateDealPage />} />
         <Route path="/deals/:id" element={<DealDetailsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
       </Routes>

@@ -1,6 +1,6 @@
 import * as React from "react"
-import { Link } from "react-router-dom"
-import { motion, animate, useReducedMotion } from "framer-motion"
+import { Link, useNavigate } from "react-router-dom"
+import { motion, animate, useReducedMotion, useMotionValue, useAnimationFrame } from "framer-motion"
 import {
   Wallet,
   ArrowRight,
@@ -22,7 +22,6 @@ import {
   Receipt,
   CalendarClock,
   Lock,
-  RotateCcw,
   TrendingUp,
   Sparkles,
   Plus,
@@ -551,11 +550,11 @@ interface Activity {
 }
 
 const ACTIVITY: Activity[] = [
-  { title: "Funds Released", meta: "Pixel Forge · Logo & Branding", time: "2 minutes ago", amount: "+$4,300", icon: Banknote, tint: "bg-emerald-500/10 text-emerald-600" },
-  { title: "Tracking Uploaded", meta: "Seller · Nova Labs", time: "15 minutes ago", icon: Truck, tint: "bg-sky-500/10 text-sky-600" },
-  { title: "Buyer Funded", meta: "Apex Studios · Website Redesign", time: "1 hour ago", amount: "+$12,500", icon: ArrowDownLeft, tint: "bg-[#2F5EFF]/10 text-[#2F5EFF]" },
+  { title: "Funds Released", meta: "PokeVault Inc. · Shadowless Mewtwo", time: "2 minutes ago", amount: "+$4,300", icon: Banknote, tint: "bg-emerald-500/10 text-emerald-600" },
+  { title: "Tracking Uploaded", meta: "Seller · Vintage Leica M6", time: "15 minutes ago", icon: Truck, tint: "bg-sky-500/10 text-sky-600" },
+  { title: "Buyer Funded", meta: "Retro Games Ltd · Charizard Holo", time: "1 hour ago", amount: "+$7,850", icon: ArrowDownLeft, tint: "bg-[#2F5EFF]/10 text-[#2F5EFF]" },
   { title: "Trust Score Increased", meta: "Now 850 · Excellent", time: "Yesterday", amount: "+15", icon: TrendingUp, tint: "bg-violet-500/10 text-violet-600" },
-  { title: "Refund Completed", meta: "RankUp Co. · SEO Retainer", time: "Yesterday", amount: "−$800", icon: RotateCcw, tint: "bg-slate-500/10 text-slate-600" },
+  { title: "Dispute Opened", meta: "Timepiece Haven · Rolex Submariner", time: "Yesterday", icon: AlertTriangle, tint: "bg-destructive/10 text-destructive" },
 ]
 
 function RecentActivity() {
@@ -699,46 +698,78 @@ function TrustScoreCard() {
 
 function FloatingActionButton() {
   const reduce = useReducedMotion()
+  const navigate = useNavigate()
+  const offset = useMotionValue(0)
+  const [isHovered, setIsHovered] = React.useState(false)
+
+  useAnimationFrame((_, delta) => {
+    if (reduce) return
+    // Perimeter is roughly ~400px.
+    // 400px / 5s = 80px/sec for one full revolution every 5 seconds.
+    const speed = isHovered ? 120 : 80
+    offset.set(offset.get() - (speed * delta) / 1000)
+  })
+
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, scale: 0.8, y: 20 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: 0.6, duration: 0.4, ease: EASE }}
-      className="group fixed bottom-6 right-6 z-50"
+      className="fixed bottom-6 right-6 z-50"
     >
-      {/* Breathing glow */}
-      {!reduce && (
-        <motion.span
-          className="pointer-events-none absolute inset-0 rounded-full blur-xl"
-          style={{ backgroundColor: BLUE }}
-          animate={{ opacity: [0.35, 0.6, 0.35], scale: [1, 1.15, 1] }}
-          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-        />
-      )}
-      {/* Rotating dotted ring */}
-      {!reduce && (
-        <motion.span
-          className="pointer-events-none absolute -inset-2 rounded-full border-2 border-dashed"
-          style={{ borderColor: "rgba(47,94,255,0.45)" }}
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
-        />
-      )}
-
-      <motion.button
-        whileHover={reduce ? undefined : { scale: 1.05 }}
-        whileTap={reduce ? undefined : { scale: 0.97 }}
-        className="relative flex items-center gap-2 overflow-hidden rounded-full px-6 py-4 font-semibold text-white shadow-[0_14px_34px_-6px_rgba(47,94,255,0.65)] transition-shadow duration-300 group-hover:shadow-[0_20px_46px_-6px_rgba(47,94,255,0.8)]"
-        style={{ backgroundImage: `linear-gradient(135deg, ${BLUE}, #4F46E5)` }}
-      >
-        {/* Gradient shimmer sweep */}
-        {!reduce && (
-          <span className="pointer-events-none absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+      <div
+        className={cn(
+          "group relative flex items-center justify-center transition-all duration-300",
+          isHovered ? "scale-[1.02] -translate-y-1" : ""
         )}
-        <Plus className="relative h-5 w-5" />
-        <span className="relative hidden sm:inline">New Deal</span>
-        <ArrowRight className="relative h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-      </motion.button>
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Orbiting focus ring */}
+        {!reduce && (
+          <div className="pointer-events-none absolute -inset-[4px] overflow-visible rounded-full">
+            <svg className="h-full w-full overflow-visible">
+              <defs>
+                <filter id="ring-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation={isHovered ? "4" : "2"} result="blur" className="transition-all duration-300" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <motion.rect
+                width="100%"
+                height="100%"
+                rx="9999"
+                fill="none"
+                stroke="#4F7CFF"
+                strokeOpacity="0.4"
+                strokeWidth="1.5"
+                strokeDasharray="4 6"
+                style={{
+                  strokeDashoffset: offset,
+                  filter: "url(#ring-glow)",
+                }}
+              />
+            </svg>
+          </div>
+        )}
+
+        {/* Button */}
+        <button
+          onClick={() => navigate("/deals/new")}
+          className={cn(
+            "relative flex h-[56px] items-center gap-2 overflow-hidden rounded-full px-6 font-semibold text-white transition-shadow duration-300",
+            isHovered ? "shadow-[0_16px_40px_-6px_rgba(47,94,255,0.7)]" : "shadow-[0_10px_25px_-6px_rgba(47,94,255,0.5)]"
+          )}
+          style={{ backgroundImage: `linear-gradient(135deg, ${BLUE}, #4F46E5)` }}
+        >
+          {!reduce && (
+            <span className="pointer-events-none absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+          )}
+          <Plus className="relative h-5 w-5" />
+          <span className="relative hidden sm:inline">Create New Deal</span>
+          <ArrowRight className={cn("relative h-4 w-4 transition-transform duration-200", isHovered && "translate-x-1")} />
+        </button>
+      </div>
     </motion.div>
   )
 }

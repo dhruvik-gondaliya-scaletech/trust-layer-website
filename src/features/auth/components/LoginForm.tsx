@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 
@@ -26,6 +26,7 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -42,6 +43,7 @@ export function LoginForm() {
     setTimeout(() => {
       console.log("Login submitted:", data)
       setIsLoading(false)
+      navigate("/dashboard")
     }, 1500)
   }
 

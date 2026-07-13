@@ -7,16 +7,8 @@ export function RegisterPage() {
 
   return (
     <AuthLayout
-      title="Create Your TrustLayer Account"
-      description="Create your account to begin secure private transactions."
-      leftPanelTitle="Secure Deals. Trusted Payments."
-      leftPanelDescription="Create your TrustLayer account and protect every private transaction from payment to delivery."
-      leftPanelFeatures={[
-        "Buyer & Seller Protection",
-        "Protected Payments",
-        "Secure Verification",
-        "Private Marketplace Transactions"
-      ]}
+      title="Create Account"
+      description="Create your account to start trusted transactions."
     >
       <RegisterForm onNext={() => navigate('/verify-account')} />
     </AuthLayout>

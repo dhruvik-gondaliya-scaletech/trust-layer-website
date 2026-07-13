@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { Link } from "react-router-dom"
 import { MainLayout } from "@/components/layout/MainLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -87,9 +88,11 @@ export function DealsPage() {
               Browse and manage your escrow-protected agreements.
             </p>
           </div>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            New Deal
+          <Button asChild>
+            <Link to="/deals/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Create New Deal
+            </Link>
           </Button>
         </div>
 
