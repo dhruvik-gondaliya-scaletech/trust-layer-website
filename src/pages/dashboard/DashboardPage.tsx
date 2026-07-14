@@ -1,37 +1,24 @@
 import * as React from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { motion, animate, useReducedMotion, useMotionValue, useAnimationFrame } from "framer-motion"
+import { Link } from "react-router-dom"
+import { motion, useReducedMotion } from "framer-motion"
 import {
-  Wallet,
+  Bell,
   ArrowRight,
-  ArrowUpRight,
-  ArrowDownLeft,
   Handshake,
   Package,
   Navigation,
   CheckCircle2,
-  ShieldCheck,
-  Clock,
-  Link2,
+  AlertCircle,
   Upload,
-  AlertTriangle,
-  FileText,
-  UserPlus,
-  BarChart3,
-  Banknote,
-  Receipt,
-  CalendarClock,
-  Lock,
-  TrendingUp,
-  Sparkles,
   Plus,
+  ChevronRight,
+  Lock,
+  Banknote,
   CreditCard,
-  Truck,
-  type LucideIcon,
+  Wallet
 } from "lucide-react"
 import { MainLayout } from "@/components/layout/MainLayout"
 import { cn } from "@/lib/utils"
-import { formatCurrency } from "@/features/deals/data"
 
 /* -------------------------------------------------------------------------- */
 /*  Design tokens                                                             */
@@ -41,178 +28,77 @@ const BLUE = "#2F5EFF"
 const CARD = "rounded-3xl bg-white shadow-[0_8px_30px_rgba(15,23,42,0.06)]"
 const EASE = [0.16, 1, 0.3, 1] as const
 
-/* Count-up number, respects reduced motion. */
-function AnimatedNumber({
-  value,
-  prefix = "",
-  suffix = "",
-  decimals = 0,
-}: {
-  value: number
-  prefix?: string
-  suffix?: string
-  decimals?: number
-}) {
-  const reduce = useReducedMotion()
-  const [n, setN] = React.useState(reduce ? value : 0)
-
-  React.useEffect(() => {
-    if (reduce) {
-      setN(value)
-      return
-    }
-    const controls = animate(0, value, {
-      duration: 1.2,
-      ease: EASE,
-      onUpdate: (v) => setN(v),
-    })
-    return () => controls.stop()
-  }, [value, reduce])
-
-  return (
-    <span>
-      {prefix}
-      {n.toLocaleString("en-US", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      })}
-      {suffix}
-    </span>
-  )
-}
-
-/* Fade-up on mount, respects reduced motion. */
-function Reveal({
-  children,
-  delay = 0,
-  className,
-}: {
-  children: React.ReactNode
-  delay?: number
-  className?: string
-}) {
-  const reduce = useReducedMotion()
-  return (
-    <motion.div
-      className={className}
-      initial={reduce ? false : { opacity: 0, y: 22 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ delay, duration: 0.5, ease: EASE }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-function SectionHeading({
-  title,
-  subtitle,
-  action,
-}: {
-  title: string
-  subtitle?: string
-  action?: React.ReactNode
-}) {
-  return (
-    <div className="mb-5 flex items-end justify-between gap-4">
-      <div>
-        <h2 className="text-lg font-bold tracking-tight text-slate-900">{title}</h2>
-        {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
-      </div>
-      {action}
-    </div>
-  )
-}
-
 /* -------------------------------------------------------------------------- */
-/*  1. Wallet hero                                                            */
+/*  1. Wallet Hero                                                            */
 /* -------------------------------------------------------------------------- */
 
-function WalletHero() {
+function WalletHero({ viewMode }: { viewMode: "seller" | "buyer" }) {
   const reduce = useReducedMotion()
-  const ei = "easeInOut" as const
-  const float = reduce
-    ? {}
-    : { animate: { y: [0, -10, 0] }, transition: { repeat: Infinity, duration: 6, ease: ei } }
-  const floatSlow = reduce
-    ? {}
-    : { animate: { y: [0, 10, 0] }, transition: { repeat: Infinity, duration: 7, ease: ei } }
-
   return (
     <motion.section
-      initial={reduce ? false : { opacity: 0, y: 24 }}
+      initial={reduce ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: EASE }}
-      className="relative overflow-hidden rounded-[28px] p-7 text-white shadow-[0_24px_60px_-16px_rgba(47,94,255,0.5)] sm:p-9"
+      transition={{ duration: 0.4, ease: EASE }}
+      className={cn(
+        "relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-9 text-white shadow-lg",
+        viewMode === "seller" ? "bg-[#2F5EFF]" : "bg-[#2F5EFF]"
+      )}
       style={{ backgroundImage: `linear-gradient(135deg, ${BLUE} 0%, #1E3FD6 55%, #4F46E5 100%)` }}
     >
-      <div className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl" />
-      <div className="pointer-events-none absolute -bottom-28 left-1/3 h-64 w-64 rounded-full bg-indigo-300/20 blur-2xl" />
-
-      <div className="relative flex items-center justify-between gap-6">
+      <div className="relative flex items-center justify-between gap-6 z-10">
         {/* Left — balances */}
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-white/70">Available Balance</p>
-          <p className="mt-2 text-[2.75rem] font-extrabold leading-none tracking-tight sm:text-[3.25rem]">
-            <AnimatedNumber value={48250} prefix="$" />
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium text-white/80">Available Balance</p>
+          <p className="mt-1 text-[2.75rem] sm:text-[3.5rem] font-extrabold leading-none tracking-tight">
+            $48,250
           </p>
 
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap gap-3">
             <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-              <p className="flex items-center gap-1.5 text-xs font-medium text-white/70">
+              <p className="flex items-center gap-1.5 text-xs font-medium text-white/80">
                 <Lock className="h-3.5 w-3.5" /> Funds On Hold
               </p>
-              <p className="mt-1 text-lg font-bold tracking-tight">
-                <AnimatedNumber value={126400} prefix="$" />
+              <p className="mt-1 text-base sm:text-lg font-bold tracking-tight">
+                $126,400
               </p>
             </div>
             <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md">
-              <p className="flex items-center gap-1.5 text-xs font-medium text-white/70">
+              <p className="flex items-center gap-1.5 text-xs font-medium text-white/80">
                 <Banknote className="h-3.5 w-3.5" /> Ready To Withdraw
               </p>
-              <p className="mt-1 text-lg font-bold tracking-tight">
-                <AnimatedNumber value={42180} prefix="$" />
+              <p className="mt-1 text-base sm:text-lg font-bold tracking-tight">
+                $42,180
               </p>
             </div>
           </div>
 
-          <button className="group mt-7 flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-semibold text-[#1E3FD6] shadow-lg shadow-black/10 transition-transform duration-200 hover:-translate-y-0.5">
+          <button className="group mt-7 flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-bold text-[#1E3FD6] shadow-lg shadow-black/10 transition-transform duration-200 hover:-translate-y-0.5">
             View Wallet
             <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
           </button>
         </div>
 
-        {/* Right — glassmorphism wallet illustration */}
-        <div className="relative hidden h-52 w-56 shrink-0 lg:block">
-          <motion.div
-            {...float}
-            className="absolute right-6 top-2 h-32 w-48 rotate-[-10deg] rounded-2xl border border-white/25 bg-white/10 p-4 shadow-xl backdrop-blur-md"
-          >
+        {/* Right — glassmorphism wallet illustration (decorative, 30% opacity) */}
+        <div className="relative hidden h-52 w-56 shrink-0 lg:block opacity-30 pointer-events-none">
+          <div className="absolute right-6 top-2 h-32 w-48 rotate-[-10deg] rounded-2xl border border-white/25 bg-white/10 p-4 shadow-xl backdrop-blur-md">
             <div className="h-6 w-9 rounded-md bg-gradient-to-br from-amber-200 to-yellow-400/80" />
             <div className="mt-6 h-2 w-24 rounded-full bg-white/40" />
             <div className="mt-2 flex items-center justify-between">
               <div className="h-2 w-16 rounded-full bg-white/25" />
               <CreditCard className="h-5 w-5 text-white/70" />
             </div>
-          </motion.div>
-          <motion.div
-            {...floatSlow}
-            className="absolute right-0 top-24 h-28 w-44 rotate-[8deg] rounded-2xl border border-white/20 bg-white/[0.07] p-4 shadow-lg backdrop-blur-md"
-          >
+          </div>
+          <div className="absolute right-0 top-24 h-28 w-44 rotate-[8deg] rounded-2xl border border-white/20 bg-white/[0.07] p-4 shadow-lg backdrop-blur-md">
             <div className="flex items-center justify-between">
               <div className="h-2 w-20 rounded-full bg-white/30" />
               <div className="h-6 w-6 rounded-full bg-white/25" />
             </div>
             <div className="mt-5 h-2 w-28 rounded-full bg-white/20" />
             <div className="mt-2 h-2 w-16 rounded-full bg-white/15" />
-          </motion.div>
-          <motion.div
-            {...float}
-            className="absolute -top-1 right-40 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur-md"
-          >
+          </div>
+          <div className="absolute -top-1 right-40 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/25 bg-white/15 shadow-lg backdrop-blur-md">
             <Wallet className="h-7 w-7 text-white" />
-          </motion.div>
+          </div>
         </div>
       </div>
     </motion.section>
@@ -223,554 +109,141 @@ function WalletHero() {
 /*  2. Quick Actions Required                                                 */
 /* -------------------------------------------------------------------------- */
 
-type Tone = "blue" | "amber" | "red"
-
-interface ActionItem {
-  title: string
-  dealId: string
-  status: string
-  tone: Tone
-  cta: string
-  ctaIcon: LucideIcon
-  Thumb: () => React.JSX.Element
-}
-
-const TONE: Record<Tone, { badge: string; button: string }> = {
-  blue: { badge: "bg-[#2F5EFF]/10 text-[#2F5EFF]", button: "bg-[#2F5EFF] text-white hover:brightness-110" },
-  amber: { badge: "bg-amber-500/10 text-amber-600", button: "bg-amber-500 text-white hover:brightness-105" },
-  red: { badge: "bg-red-500/10 text-red-600", button: "bg-red-500 text-white hover:brightness-105" },
-}
-
-const ACTIONS: ActionItem[] = [
-  { title: "Shadowless Mewtwo PSA 10", dealId: "DL-2087", status: "LINK READY", tone: "blue", cta: "View Deal", ctaIcon: Link2, Thumb: ThumbGradedCard },
-  { title: "Vintage Leica M6 Camera", dealId: "DL-2091", status: "TRACKING REQUIRED", tone: "amber", cta: "Upload Tracking", ctaIcon: Upload, Thumb: ThumbCamera },
-  { title: "SEO Retainer — Reported Issue", dealId: "DL-1018", status: "DISPUTE OPEN", tone: "red", cta: "Review Dispute", ctaIcon: AlertTriangle, Thumb: ThumbDispute },
+const SELLER_ACTIONS = [
+  { title: "Shadowless Mewtwo PSA 10", dealId: "TRUST-0845", status: "LINK CREATED", desc: "Link is ready to be shared with the buyer.", cta: "View Deal", Thumb: ThumbGradedCard },
+  { title: "Shadowless Mewtwo PSA 10", dealId: "TRUST-0845", status: "DISPUTE OPEN", statusColor: "text-red-500 bg-red-500/10", desc: "Buyer reported:\n\"Missing Items\"\n\nFunds are temporarily frozen.", cta: "Review Dispute", Thumb: ThumbGradedCard },
+  { title: "Untitled Deal", dealId: "TRUST-1024", status: "PAYMENT RECEIVED", desc: "Upload Tracking Details", cta: "Add Tracking", Thumb: ThumbCamera },
 ]
 
-function QuickActionsRequired() {
-  const reduce = useReducedMotion()
-  return (
-    <div className="flex flex-col gap-4">
-      {ACTIONS.map((a, i) => {
-        const tone = TONE[a.tone]
-        return (
-          <Reveal key={a.dealId} delay={i * 0.08}>
-            <motion.div
-              whileHover={reduce ? undefined : { y: -4, scale: 1.008 }}
-              transition={{ duration: 0.2 }}
-              className={cn(
-                CARD,
-                "group flex items-center gap-4 p-4 transition-shadow hover:shadow-[0_20px_45px_rgba(15,23,42,0.12)] sm:gap-5 sm:p-5",
-              )}
-            >
-              <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl sm:h-24 sm:w-24">
-                <div className="h-full w-full transition-transform duration-500 group-hover:scale-110">
-                  <a.Thumb />
-                </div>
-              </div>
+const BUYER_ACTIONS = [
+  { title: "Untitled Deal", dealId: "TRUST-1024", status: "PAYMENT RECEIVED", desc: "Waiting for Seller Shipment", cta: "View Deal", Thumb: ThumbCamera },
+  { title: "First Edition Base Set Booster", dealId: "TRUST-0992", status: "SHIPPED", desc: "Tracking Available", cta: "View Shipment", Thumb: ThumbGradedCard },
+  { title: "Shadowless Mewtwo PSA 10", dealId: "TRUST-0845", status: "WAITING FOR SELLER", desc: "Seller has 72 hours to respond.", cta: "View Dispute", Thumb: ThumbGradedCard },
+  { title: "Shadowless Mewtwo PSA 10", dealId: "TRUST-0845", status: "DISPUTE DECLINED", statusColor: "text-red-500 bg-red-500/10", desc: "Seller declined your dispute request.\n\nReason:\n\"The item matches the original listing.\"", cta: "Review Decision", Thumb: ThumbGradedCard },
+]
 
-              <div className="min-w-0 flex-1">
-                <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide", tone.badge)}>
+function QuickActionsRequired({ viewMode }: { viewMode: "seller" | "buyer" }) {
+  const actions = viewMode === "seller" ? SELLER_ACTIONS : BUYER_ACTIONS
+  const primaryBtnClass = viewMode === "seller" ? "bg-[#2F5EFF] hover:bg-[#1E3FD6]" : "bg-emerald-500 hover:bg-emerald-600"
+  const defaultStatusColor = viewMode === "seller" ? "text-[#2F5EFF] bg-[#2F5EFF]/10" : "text-emerald-600 bg-emerald-500/10"
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {actions.map((a, i) => (
+        <div key={i} className={cn(CARD, "p-4 sm:p-5 flex flex-col gap-4")}>
+          <div className="flex items-center gap-3">
+            <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full sm:h-14 sm:w-14 bg-slate-100 flex items-center justify-center">
+              <div className="h-full w-full scale-[1.3] translate-y-1">
+                <a.Thumb />
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h4 className="truncate text-sm sm:text-base font-bold text-slate-900">{a.title}</h4>
+              <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] sm:text-xs font-semibold">
+                <span className="text-slate-500">{a.dealId}</span>
+                <span className="text-slate-300 hidden sm:inline">•</span>
+                <span className={cn("rounded-sm px-1.5 py-0.5", a.statusColor || defaultStatusColor)}>
                   {a.status}
                 </span>
-                <h4 className="mt-1.5 truncate font-semibold tracking-tight text-slate-900">{a.title}</h4>
-                <p className="text-xs text-slate-400">Deal {a.dealId}</p>
               </div>
-
-              <button
-                className={cn(
-                  "hidden shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 group-hover:gap-3 sm:flex",
-                  tone.button,
-                )}
-              >
-                <a.ctaIcon className="h-4 w-4" />
-                {a.cta}
-              </button>
-            </motion.div>
-          </Reveal>
-        )
-      })}
-    </div>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/*  3. Quick Insights (2 x 3)                                                 */
-/* -------------------------------------------------------------------------- */
-
-interface Insight {
-  label: string
-  value: number
-  prefix?: string
-  delta: string
-  up: boolean
-  icon: LucideIcon
-  tint: string
-}
-
-const INSIGHTS: Insight[] = [
-  { label: "Active Deals", value: 12, delta: "+3", up: true, icon: Handshake, tint: "bg-[#2F5EFF]/10 text-[#2F5EFF]" },
-  { label: "Awaiting Delivery", value: 5, delta: "+1", up: true, icon: Package, tint: "bg-amber-500/10 text-amber-600" },
-  { label: "In Transit", value: 3, delta: "+2", up: true, icon: Navigation, tint: "bg-sky-500/10 text-sky-600" },
-  { label: "Completed", value: 48, delta: "+5", up: true, icon: CheckCircle2, tint: "bg-emerald-500/10 text-emerald-600" },
-  { label: "Trust Score", value: 850, delta: "+15", up: true, icon: ShieldCheck, tint: "bg-violet-500/10 text-violet-600" },
-  { label: "Pending Release", value: 9120, prefix: "$", delta: "-1", up: false, icon: Clock, tint: "bg-slate-500/10 text-slate-600" },
-]
-
-function QuickInsights() {
-  return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-      {INSIGHTS.map((it, i) => (
-        <Reveal key={it.label} delay={i * 0.05}>
-          <div className={cn(CARD, "flex h-full flex-col gap-4 p-5")}>
-            <div className="flex items-center justify-between">
-              <span className={cn("flex h-9 w-9 items-center justify-center rounded-xl", it.tint)}>
-                <it.icon className="h-[18px] w-[18px]" />
-              </span>
-              <span
-                className={cn(
-                  "flex items-center gap-0.5 text-xs font-semibold",
-                  it.up ? "text-emerald-600" : "text-red-500",
-                )}
-              >
-                {it.up ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownLeft className="h-3 w-3" />}
-                {it.delta}
-              </span>
-            </div>
-            <div>
-              <p className="text-2xl font-bold tracking-tight text-slate-900">
-                <AnimatedNumber value={it.value} prefix={it.prefix} />
-              </p>
-              <p className="mt-0.5 text-xs font-medium text-slate-500">{it.label}</p>
             </div>
           </div>
-        </Reveal>
+          
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mt-2">
+            <p className="whitespace-pre-line text-xs sm:text-sm font-medium text-slate-600 leading-relaxed">
+              {a.desc}
+            </p>
+            <button className={cn("shrink-0 rounded-lg px-4 py-2 text-xs sm:text-sm font-semibold text-white transition-colors w-full sm:w-auto", primaryBtnClass)}>
+              {a.cta}
+            </button>
+          </div>
+        </div>
       ))}
     </div>
   )
 }
 
 /* -------------------------------------------------------------------------- */
-/*  4. Recent deals                                                           */
+/*  3. Quick Insights                                                         */
 /* -------------------------------------------------------------------------- */
 
-type TxStatus =
-  | "Draft"
-  | "Open"
-  | "Funded"
-  | "Awaiting Shipment"
-  | "Shipped"
-  | "In Transit"
-  | "Delivered"
-  | "Awaiting Confirmation"
-  | "Completed"
-  | "Disputed"
-  | "Funds Released"
-
-const STATUS_META: Record<TxStatus, { dot: string; text: string; button: string }> = {
-  Draft: { dot: "bg-slate-400", text: "text-slate-600", button: "bg-slate-700 hover:brightness-110" },
-  Open: { dot: "bg-sky-500", text: "text-sky-600", button: "bg-sky-500 hover:brightness-105" },
-  Funded: { dot: "bg-[#2F5EFF]", text: "text-[#2F5EFF]", button: "bg-[#2F5EFF] hover:brightness-110" },
-  "Awaiting Shipment": { dot: "bg-amber-500", text: "text-amber-600", button: "bg-amber-500 hover:brightness-105" },
-  Shipped: { dot: "bg-indigo-500", text: "text-indigo-600", button: "bg-indigo-500 hover:brightness-105" },
-  "In Transit": { dot: "bg-sky-500", text: "text-sky-600", button: "bg-sky-500 hover:brightness-105" },
-  Delivered: { dot: "bg-emerald-500", text: "text-emerald-600", button: "bg-emerald-500 hover:brightness-105" },
-  "Awaiting Confirmation": { dot: "bg-amber-500", text: "text-amber-600", button: "bg-amber-500 hover:brightness-105" },
-  Completed: { dot: "bg-emerald-500", text: "text-emerald-600", button: "bg-emerald-500 hover:brightness-105" },
-  Disputed: { dot: "bg-red-500", text: "text-red-600", button: "bg-red-500 hover:brightness-105" },
-  "Funds Released": { dot: "bg-emerald-500", text: "text-emerald-600", button: "bg-emerald-500 hover:brightness-105" },
-}
-
-interface Transaction {
-  id: string
-  product: string
-  role: "Buyer" | "Seller"
-  status: TxStatus
-  amount: number
-  trust: number
-  updated: string
-  action: string
-  actionIcon: LucideIcon
-  Thumb: () => React.JSX.Element
-}
-
-const TRANSACTIONS: Transaction[] = [
-  { id: "TRUST-0845", product: "Shadowless Mewtwo PSA 10", role: "Buyer", status: "Funded", amount: 4300, trust: 812, updated: "2 hours ago", action: "View Deal", actionIcon: ArrowRight, Thumb: ThumbMewtwo },
-  { id: "TRUST-1024", product: "Vintage Leica M6 Camera", role: "Seller", status: "Awaiting Shipment", amount: 2400, trust: 774, updated: "5 hours ago", action: "Upload Tracking", actionIcon: Upload, Thumb: ThumbLeica },
-  { id: "TRUST-1088", product: "Charizard Holo 1999 Base Set", role: "Buyer", status: "Delivered", amount: 7850, trust: 905, updated: "1 day ago", action: "Confirm Delivery", actionIcon: CheckCircle2, Thumb: ThumbCharizard },
-  { id: "TRUST-1127", product: "Rolex Submariner 16610", role: "Seller", status: "Disputed", amount: 9900, trust: 631, updated: "3 hours ago", action: "Review Dispute", actionIcon: AlertTriangle, Thumb: ThumbRolex },
+const SELLER_INSIGHTS = [
+  { label: "Active Deals", value: 3 },
+  { label: "Awaiting Delivery", value: 1 },
+  { label: "In Transit", value: 1 },
+  { label: "Completed", value: 16 },
 ]
 
-function TransactionCard({ tx, index }: { tx: Transaction; index: number }) {
-  const reduce = useReducedMotion()
-  const meta = STATUS_META[tx.status]
+const BUYER_INSIGHTS = [
+  { label: "Active Deals", value: 1 },
+  { label: "Awaiting Delivery", value: 1 },
+  { label: "In Transit", value: 2 },
+  { label: "Completed", value: 4 },
+]
+
+function QuickInsights({ viewMode }: { viewMode: "seller" | "buyer" }) {
+  const insights = viewMode === "seller" ? SELLER_INSIGHTS : BUYER_INSIGHTS
+  const textColor = viewMode === "seller" ? "text-[#2F5EFF]" : "text-emerald-500"
 
   return (
-    <Reveal delay={index * 0.06} className="h-full">
-      <motion.div
-        whileHover={reduce ? undefined : { y: -6 }}
-        transition={{ duration: 0.2 }}
-        className={cn(
-          CARD,
-          "group flex h-full flex-col overflow-hidden ring-1 ring-transparent transition-all duration-200 hover:shadow-[0_22px_50px_rgba(15,23,42,0.12)] hover:ring-[#2F5EFF]/40",
-        )}
-      >
-        {/* Product thumbnail */}
-        <div className="relative h-36 overflow-hidden">
-          <div className="h-full w-full transition-transform duration-500 group-hover:scale-110">
-            <tx.Thumb />
-          </div>
-          <span className="absolute right-3 top-3 flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold shadow-sm ring-1 ring-black/5 backdrop-blur">
-            <span className={cn("h-1.5 w-1.5 rounded-full", meta.dot)} />
-            <span className={meta.text}>{tx.status}</span>
-          </span>
+    <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      {insights.map((it, i) => (
+        <div key={i} className={cn(CARD, "flex flex-col items-center justify-center gap-1 p-4 sm:p-5 text-center")}>
+          <p className={cn("text-2xl sm:text-3xl font-extrabold tracking-tight", textColor)}>
+            {it.value}
+          </p>
+          <p className="text-[11px] sm:text-xs font-medium text-slate-500">{it.label}</p>
         </div>
-
-        {/* Content */}
-        <div className="flex flex-1 flex-col p-5">
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                "rounded-md px-2 py-0.5 text-[11px] font-semibold",
-                tx.role === "Buyer" ? "bg-[#2F5EFF]/10 text-[#2F5EFF]" : "bg-violet-500/10 text-violet-600",
-              )}
-            >
-              {tx.role}
-            </span>
-            <span className="text-xs font-medium text-slate-400">{tx.id}</span>
-          </div>
-
-          <h4 className="mt-2 truncate font-semibold tracking-tight text-slate-900">{tx.product}</h4>
-
-          <div className="mt-1 flex items-center gap-3 text-xs text-slate-500">
-            <span className="flex items-center gap-1">
-              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              {tx.role === "Buyer" ? "Seller" : "Buyer"} trust {tx.trust}
-            </span>
-            <span className="flex items-center gap-1 text-slate-400">
-              <Clock className="h-3 w-3" />
-              {tx.updated}
-            </span>
-          </div>
-
-          <div className="mt-4 flex items-end justify-between border-t border-slate-100 pt-4">
-            <div>
-              <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Amount</p>
-              <p className="text-xl font-bold tracking-tight text-slate-900">{formatCurrency(tx.amount)}</p>
-            </div>
-            <button
-              className={cn(
-                "flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-semibold text-white transition-all duration-200 group-hover:gap-2",
-                meta.button,
-              )}
-            >
-              <tx.actionIcon className="h-4 w-4" />
-              {tx.action}
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </Reveal>
+      ))}
+    </div>
   )
 }
 
-function RecentDeals() {
+/* -------------------------------------------------------------------------- */
+/*  4. Recent Deals                                                           */
+/* -------------------------------------------------------------------------- */
+
+function RecentDeals({ viewMode }: { viewMode: "seller" | "buyer" }) {
+  const deals = [
+    { title: "Charizard Holo 1999", dealId: "TRUST-1024", amount: "$4,300", Thumb: ThumbCharizard },
+    { title: "Vintage Leica M6", dealId: "TRUST-1025", amount: "$2,400", Thumb: ThumbLeica },
+    { title: "MacBook Pro M3", dealId: "TRUST-1026", amount: "$1,850", Thumb: ThumbRolex },
+  ]
+  const linkColor = viewMode === "seller" ? "text-[#2F5EFF]" : "text-emerald-500"
+
   return (
-    <section>
-      <SectionHeading
-        title="Recent Deals"
-        subtitle="Your latest escrow transactions"
-        action={
-          <Link to="/deals" className="flex items-center gap-1 text-sm font-medium text-[#2F5EFF] hover:underline">
-            View all <ArrowRight className="h-4 w-4" />
-          </Link>
-        }
-      />
-      <div className="grid gap-5 sm:grid-cols-2">
-        {TRANSACTIONS.map((tx, i) => (
-          <TransactionCard key={tx.id} tx={tx} index={i} />
-        ))}
+    <section className="pb-4">
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-sm font-bold text-slate-900">Recent Deals</h2>
+        <Link to="/deals" className={cn("text-xs font-bold hover:underline", linkColor)}>
+          View All
+        </Link>
       </div>
-    </section>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/*  7. Quick actions (six square cards)                                       */
-/* -------------------------------------------------------------------------- */
-
-const QUICK_ACTIONS: { label: string; icon: LucideIcon; tint: string }[] = [
-  { label: "New Deal", icon: Plus, tint: "bg-[#2F5EFF]/10 text-[#2F5EFF]" },
-  { label: "Deposit", icon: ArrowDownLeft, tint: "bg-emerald-500/10 text-emerald-600" },
-  { label: "Withdraw", icon: ArrowUpRight, tint: "bg-sky-500/10 text-sky-600" },
-  { label: "Invite Party", icon: UserPlus, tint: "bg-violet-500/10 text-violet-600" },
-  { label: "Statements", icon: FileText, tint: "bg-slate-500/10 text-slate-600" },
-  { label: "Reports", icon: BarChart3, tint: "bg-amber-500/10 text-amber-600" },
-]
-
-function QuickActions() {
-  const reduce = useReducedMotion()
-  return (
-    <section>
-      <SectionHeading title="Quick Actions" subtitle="One tap to your next move" />
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        {QUICK_ACTIONS.map((a, i) => (
-          <Reveal key={a.label} delay={i * 0.05}>
-            <motion.button
-              whileHover={reduce ? undefined : { y: -6 }}
-              transition={{ duration: 0.2 }}
-              className={cn(
-                CARD,
-                "flex aspect-square w-full flex-col items-center justify-center gap-3 hover:shadow-[0_18px_40px_rgba(15,23,42,0.1)]",
-              )}
-            >
-              <span className={cn("flex h-12 w-12 items-center justify-center rounded-2xl", a.tint)}>
-                <a.icon className="h-6 w-6" />
-              </span>
-              <span className="text-sm font-semibold text-slate-800">{a.label}</span>
-            </motion.button>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/*  5. Recent activity (timeline)                                             */
-/* -------------------------------------------------------------------------- */
-
-interface Activity {
-  title: string
-  meta: string
-  time: string
-  amount?: string
-  icon: LucideIcon
-  tint: string
-}
-
-const ACTIVITY: Activity[] = [
-  { title: "Funds Released", meta: "PokeVault Inc. · Shadowless Mewtwo", time: "2 minutes ago", amount: "+$4,300", icon: Banknote, tint: "bg-emerald-500/10 text-emerald-600" },
-  { title: "Tracking Uploaded", meta: "Seller · Vintage Leica M6", time: "15 minutes ago", icon: Truck, tint: "bg-sky-500/10 text-sky-600" },
-  { title: "Buyer Funded", meta: "Retro Games Ltd · Charizard Holo", time: "1 hour ago", amount: "+$7,850", icon: ArrowDownLeft, tint: "bg-[#2F5EFF]/10 text-[#2F5EFF]" },
-  { title: "Trust Score Increased", meta: "Now 850 · Excellent", time: "Yesterday", amount: "+15", icon: TrendingUp, tint: "bg-violet-500/10 text-violet-600" },
-  { title: "Dispute Opened", meta: "Timepiece Haven · Rolex Submariner", time: "Yesterday", icon: AlertTriangle, tint: "bg-destructive/10 text-destructive" },
-]
-
-function RecentActivity() {
-  const reduce = useReducedMotion()
-  return (
-    <div className={cn(CARD, "p-6")}>
-      <h3 className="font-semibold tracking-tight text-slate-900">Recent Activity</h3>
-      <div className="relative mt-5">
-        <span className="absolute bottom-3 left-[18px] top-3 w-px bg-slate-200" />
-        <ul className="space-y-5">
-          {ACTIVITY.map((a, i) => (
-            <motion.li
-              key={a.title}
-              initial={reduce ? false : { opacity: 0, x: 12 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08, duration: 0.4, ease: EASE }}
-              className="relative flex items-start gap-3.5"
-            >
-              <span className={cn("relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-4 ring-white", a.tint)}>
-                <a.icon className="h-[18px] w-[18px]" />
-              </span>
-              <div className="min-w-0 flex-1 pt-0.5">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="truncate text-sm font-semibold text-slate-800">{a.title}</p>
-                  {a.amount && (
-                    <span className={cn("shrink-0 text-sm font-bold", a.amount.startsWith("−") ? "text-slate-500" : "text-emerald-600")}>
-                      {a.amount}
-                    </span>
-                  )}
+      <div className={cn(CARD, "flex flex-col divide-y divide-slate-100")}>
+        {deals.map((deal, i) => (
+          <div key={i} className="flex items-center justify-between p-4 sm:p-5 hover:bg-slate-50 transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full sm:h-12 sm:w-12 bg-slate-100 flex items-center justify-center">
+                <div className="h-full w-full scale-125">
+                  <deal.Thumb />
                 </div>
-                <p className="truncate text-xs text-slate-500">{a.meta}</p>
-                <p className="mt-0.5 text-[11px] text-slate-400">{a.time}</p>
               </div>
-            </motion.li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/*  6. Wallet snapshot                                                        */
-/* -------------------------------------------------------------------------- */
-
-const SNAPSHOT: { label: string; value: string; icon: LucideIcon; tint: string }[] = [
-  { label: "Ready To Withdraw", value: "$42,180", icon: Banknote, tint: "bg-emerald-500/10 text-emerald-600" },
-  { label: "Funds On Hold", value: "$126,400", icon: Lock, tint: "bg-amber-500/10 text-amber-600" },
-  { label: "Upcoming Releases", value: "$18,900", icon: CalendarClock, tint: "bg-[#2F5EFF]/10 text-[#2F5EFF]" },
-  { label: "Platform Fees", value: "$312.50", icon: Receipt, tint: "bg-slate-500/10 text-slate-600" },
-]
-
-function WalletSnapshot() {
-  return (
-    <div className={cn(CARD, "p-6")}>
-      <h3 className="font-semibold tracking-tight text-slate-900">Wallet Snapshot</h3>
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        {SNAPSHOT.map((s) => (
-          <div key={s.label} className="rounded-2xl bg-slate-50 p-3.5">
-            <span className={cn("flex h-8 w-8 items-center justify-center rounded-lg", s.tint)}>
-              <s.icon className="h-4 w-4" />
-            </span>
-            <p className="mt-2.5 text-base font-bold tracking-tight text-slate-900">{s.value}</p>
-            <p className="text-[11px] font-medium leading-tight text-slate-500">{s.label}</p>
+              <div>
+                <h4 className="text-sm sm:text-[15px] font-bold text-slate-900">{deal.title}</h4>
+                <div className="mt-0.5 flex items-center gap-1.5 text-[10px] sm:text-xs">
+                  <span className="font-medium text-slate-500">{deal.dealId}</span>
+                </div>
+                <p className={cn("text-[10px] sm:text-xs font-bold mt-0.5", linkColor)}>Completed</p>
+              </div>
+            </div>
+            <div className="text-right flex flex-col items-end gap-1">
+              <span className="text-sm sm:text-base font-extrabold text-slate-900">{deal.amount}</span>
+              <ChevronRight className="h-4 w-4 text-slate-400" />
+            </div>
           </div>
         ))}
       </div>
-    </div>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Trust score card                                                          */
-/* -------------------------------------------------------------------------- */
-
-function TrustScoreCard() {
-  const reduce = useReducedMotion()
-  const score = 850
-  const max = 900
-  const pct = score / max
-  const radius = 54
-  const circumference = 2 * Math.PI * radius
-  const dash = circumference * pct
-
-  return (
-    <div className={cn(CARD, "p-6")}>
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold tracking-tight text-slate-900">Trust Score</h3>
-        <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600">
-          <Sparkles className="h-3 w-3" /> Excellent
-        </span>
-      </div>
-
-      <div className="mt-4 flex flex-col items-center">
-        <div className="relative h-40 w-40">
-          <svg viewBox="0 0 128 128" className="h-full w-full -rotate-90">
-            <circle cx="64" cy="64" r={radius} fill="none" stroke="#EEF2F7" strokeWidth="11" />
-            <motion.circle
-              cx="64"
-              cy="64"
-              r={radius}
-              fill="none"
-              stroke="url(#tsGrad)"
-              strokeWidth="11"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              initial={reduce ? { strokeDashoffset: circumference - dash } : { strokeDashoffset: circumference }}
-              animate={{ strokeDashoffset: circumference - dash }}
-              transition={{ duration: 1.4, ease: EASE, delay: 0.2 }}
-            />
-            <defs>
-              <linearGradient id="tsGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor={BLUE} />
-                <stop offset="1" stopColor="#7C3AED" />
-              </linearGradient>
-            </defs>
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-4xl font-extrabold tracking-tight text-slate-900">
-              <AnimatedNumber value={score} />
-            </span>
-            <span className="text-xs font-medium text-slate-400">of {max}</span>
-          </div>
-        </div>
-        <p className="mt-2 text-sm font-semibold text-slate-700">Excellent Standing</p>
-        <p className="text-xs text-slate-500">Faster releases · lower fees</p>
-      </div>
-
-      <button className="group mt-5 flex w-full items-center justify-center gap-1 rounded-xl bg-slate-50 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-100">
-        View Breakdown
-        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-      </button>
-    </div>
-  )
-}
-
-/* -------------------------------------------------------------------------- */
-/*  Floating "Create Deal" button — signature interaction                     */
-/* -------------------------------------------------------------------------- */
-
-function FloatingActionButton() {
-  const reduce = useReducedMotion()
-  const navigate = useNavigate()
-  const offset = useMotionValue(0)
-  const [isHovered, setIsHovered] = React.useState(false)
-
-  useAnimationFrame((_, delta) => {
-    if (reduce) return
-    // Perimeter is roughly ~400px.
-    // 400px / 5s = 80px/sec for one full revolution every 5 seconds.
-    const speed = isHovered ? 120 : 80
-    offset.set(offset.get() - (speed * delta) / 1000)
-  })
-
-  return (
-    <motion.div
-      initial={reduce ? false : { opacity: 0, scale: 0.8, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ delay: 0.6, duration: 0.4, ease: EASE }}
-      className="fixed bottom-6 right-6 z-50"
-    >
-      <div
-        className={cn(
-          "group relative flex items-center justify-center transition-all duration-300",
-          isHovered ? "scale-[1.02] -translate-y-1" : ""
-        )}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {/* Orbiting focus ring */}
-        {!reduce && (
-          <div className="pointer-events-none absolute -inset-[4px] overflow-visible rounded-full">
-            <svg className="h-full w-full overflow-visible">
-              <defs>
-                <filter id="ring-glow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation={isHovered ? "4" : "2"} result="blur" className="transition-all duration-300" />
-                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                </filter>
-              </defs>
-              <motion.rect
-                width="100%"
-                height="100%"
-                rx="9999"
-                fill="none"
-                stroke="#4F7CFF"
-                strokeOpacity="0.4"
-                strokeWidth="1.5"
-                strokeDasharray="4 6"
-                style={{
-                  strokeDashoffset: offset,
-                  filter: "url(#ring-glow)",
-                }}
-              />
-            </svg>
-          </div>
-        )}
-
-        {/* Button */}
-        <button
-          onClick={() => navigate("/deals/new")}
-          className={cn(
-            "relative flex h-[56px] items-center gap-2 overflow-hidden rounded-full px-6 font-semibold text-white transition-shadow duration-300",
-            isHovered ? "shadow-[0_16px_40px_-6px_rgba(47,94,255,0.7)]" : "shadow-[0_10px_25px_-6px_rgba(47,94,255,0.5)]"
-          )}
-          style={{ backgroundImage: `linear-gradient(135deg, ${BLUE}, #4F46E5)` }}
-        >
-          {!reduce && (
-            <span className="pointer-events-none absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-          )}
-          <Plus className="relative h-5 w-5" />
-          <span className="relative hidden sm:inline">Create New Deal</span>
-          <ArrowRight className={cn("relative h-4 w-4 transition-transform duration-200", isHovered && "translate-x-1")} />
-        </button>
-      </div>
-    </motion.div>
+    </section>
   )
 }
 
@@ -779,61 +252,91 @@ function FloatingActionButton() {
 /* -------------------------------------------------------------------------- */
 
 export function DashboardPage() {
+  const [viewMode, setViewMode] = React.useState<"seller" | "buyer">("seller")
+
   return (
-    <MainLayout className="bg-slate-50" mainClassName="py-8 pb-28 lg:py-10">
-      <Reveal className="mb-8">
-        <p className="text-sm font-medium text-slate-400">Welcome back</p>
-        <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">
-          Good to see you, Bhavya
-        </h1>
-      </Reveal>
+    <MainLayout className="bg-slate-50" mainClassName="py-6 sm:py-10">
+      <div className="w-full max-w-[1280px] mx-auto flex flex-col gap-6 sm:gap-8 px-4 sm:px-6 lg:px-8 pb-20">
+        
+        {/* Header matching mobile */}
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="relative">
+              <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Alex" className="h-12 w-12 sm:h-14 sm:w-14 rounded-full ring-2 ring-white shadow-sm" />
+            </div>
+            <div>
+              <h1 className="text-sm sm:text-base font-bold tracking-tight text-slate-900">
+                Good Evening, Alex
+              </h1>
+              {/* Seller / Buyer Toggle */}
+              <div className="mt-1.5 inline-flex items-center rounded-full bg-slate-100 p-1">
+                <button
+                  onClick={() => setViewMode("seller")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-bold transition-all",
+                    viewMode === "seller" ? "bg-[#2F5EFF] text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  )}
+                >
+                  <Handshake className="h-3 w-3" /> SELLER
+                </button>
+                <button
+                  onClick={() => setViewMode("buyer")}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-1.5 text-[11px] sm:text-xs font-bold transition-all",
+                    viewMode === "buyer" ? "bg-[#2F5EFF] text-white shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  )}
+                >
+                  <Package className="h-3 w-3" /> BUYER
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Create New Deal Button (Sticky on Desktop) */}
+          {viewMode === "seller" && (
+            <div className="fixed top-[88px] right-4 sm:right-6 lg:right-8 xl:right-[calc(50vw-640px+32px)] z-50 hidden sm:block">
+              <button className="flex items-center gap-2 rounded-xl bg-[#2F5EFF] px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-[#1E3FD6] shadow-lg shadow-blue-500/25">
+                <Plus className="h-4 w-4" /> Create New Deal
+              </button>
+            </div>
+          )}
+        </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
-        {/* Main column (~70%) */}
-        <div className="flex flex-col gap-10 lg:col-span-8">
-          {/* 1. Wallet */}
-          <WalletHero />
+        {/* 1. Wallet */}
+        <WalletHero viewMode={viewMode} />
 
-          {/* 2. Quick Actions Required */}
-          <section>
-            <SectionHeading title="Action Required" subtitle="These deals need your attention" />
-            <QuickActionsRequired />
-          </section>
+        {/* 2. Quick Actions Required */}
+        <section>
+          <div className="mb-4 flex items-center gap-1.5 text-sm font-bold text-slate-900">
+            <AlertCircle className={cn("h-4 w-4", viewMode === "seller" ? "text-blue-500" : "text-emerald-500")} /> Quick Actions Required
+          </div>
+          <QuickActionsRequired viewMode={viewMode} />
+        </section>
 
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-start">
           {/* 3. Quick Insights */}
           <section>
-            <SectionHeading title="Quick Insights" subtitle="A snapshot of your activity" />
-            <QuickInsights />
+            <h2 className="mb-4 text-sm font-bold text-slate-900">Quick Insights</h2>
+            <QuickInsights viewMode={viewMode} />
           </section>
 
           {/* 4. Recent Deals */}
-          <RecentDeals />
-
-          {/* 7. Quick Actions */}
-          <QuickActions />
-        </div>
-
-        {/* Sidebar (~30%) — sticky */}
-        <aside className="lg:col-span-4">
-          <div className="flex flex-col gap-6 lg:sticky lg:top-24">
-            {/* 5. Recent Activity */}
-            <RecentActivity />
-            {/* 6. Wallet Snapshot */}
-            <WalletSnapshot />
-            {/* Trust Score */}
-            <TrustScoreCard />
+          <div>
+            <RecentDeals viewMode={viewMode} />
           </div>
-        </aside>
+        </div>
+        
+        {/* Mobile Create New Deal Button (Visible only on small screens) */}
+        {viewMode === "seller" && (
+          <button className="mt-2 mb-10 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2F5EFF] py-4 font-semibold text-white transition-all hover:bg-[#1E3FD6] shadow-sm sm:hidden">
+            <Plus className="h-5 w-5" /> Create New Deal
+          </button>
+        )}
       </div>
-
-      <FloatingActionButton />
     </MainLayout>
   )
 }
 
-/* -------------------------------------------------------------------------- */
-/*  Inline SVG product thumbnails (no external assets)                        */
-/* -------------------------------------------------------------------------- */
 
 function ThumbGradedCard() {
   return (

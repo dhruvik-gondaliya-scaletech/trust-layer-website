@@ -43,7 +43,7 @@ export function RegistrationLayout({
       )}
 
       {/* Main Centered Content */}
-      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[560px] px-6 py-6 lg:py-10">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-[520px] px-6 py-6 lg:py-10">
         
         {/* Header / Progress Section */}
         {!hideHeader && (

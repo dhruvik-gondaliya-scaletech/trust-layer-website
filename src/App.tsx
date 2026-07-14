@@ -13,6 +13,9 @@ import { DealsPage } from "./pages/deals/DealsPage"
 import { DealDetailsPage } from "./pages/deals/DealDetailsPage"
 import { CreateDealPage } from "./pages/deals/CreateDealPage"
 import { PaymentsPage } from "./pages/payments/PaymentsPage"
+import { TermsPage } from "./pages/legal/TermsPage"
+import { PrivacyPage } from "./pages/legal/PrivacyPage"
+import { PlatformTermsPage } from "./pages/legal/PlatformTermsPage"
 import { MainLayout } from "./components/layout/MainLayout"
 import { Button } from "./components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card"
@@ -277,6 +280,9 @@ function App() {
         <Route path="/deals/new" element={<CreateDealPage />} />
         <Route path="/deals/:id" element={<DealDetailsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/platform-terms" element={<PlatformTermsPage />} />
       </Routes>
     </BrowserRouter>
   )

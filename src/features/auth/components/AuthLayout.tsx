@@ -16,8 +16,8 @@ export function AuthLayout({
   description,
 }: AuthLayoutProps) {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-50 px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-[480px] bg-card p-6 sm:p-10 shadow-sm rounded-2xl border">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-[520px] px-6 py-10">
         
         {/* Header Section */}
         <div className="w-full mb-8">

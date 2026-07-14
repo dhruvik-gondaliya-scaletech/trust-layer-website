@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { Loader2, Check } from "lucide-react"
+import { Loader2, Check, ShieldCheck } from "lucide-react"
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First name is required."),
@@ -145,22 +145,22 @@ export function RegisterForm({ onNext }: RegisterFormProps) {
             control={form.control}
             name="terms"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0 text-left">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="mt-1"
-                  />
-                </FormControl>
-                <div className="space-y-1">
-                  <FormLabel className="text-sm font-normal text-muted-foreground leading-snug">
-                    I agree to the <Link to="#" className="text-primary hover:underline">Terms</Link>, <Link to="#" className="text-primary hover:underline">Privacy Policy</Link>, and <Link to="#" className="text-primary hover:underline">Platform Terms</Link>.
+              <FormItem className="space-y-3">
+                <div className="flex flex-row items-start space-x-3 text-left">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      className="mt-0.5"
+                    />
+                  </FormControl>
+                  <FormLabel className="text-[15px] font-normal text-muted-foreground leading-snug">
+                    I agree to the <Link to="/terms" className="text-primary hover:underline">Terms</Link>, <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>, and <Link to="/platform-terms" className="text-primary hover:underline">Platform Terms</Link>.
                   </FormLabel>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground/70 pt-1">
-                    <Check className="h-3 w-3" />
-                    Built for secure buyer and seller transactions.
-                  </div>
+                </div>
+                <div className="flex items-center justify-center gap-1.5 text-[13px] text-muted-foreground/70">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Built for secure buyer and seller transactions.
                 </div>
               </FormItem>
             )}
