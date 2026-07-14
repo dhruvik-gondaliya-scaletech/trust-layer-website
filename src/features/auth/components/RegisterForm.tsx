@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Link } from "react-router-dom"
 import { useState } from "react"
-import { Loader2, Check, ShieldCheck } from "lucide-react"
+import { Loader2, ShieldCheck } from "lucide-react"
 
 const registerSchema = z.object({
   firstName: z.string().min(2, "First name is required."),

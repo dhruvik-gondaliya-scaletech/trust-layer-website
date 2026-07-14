@@ -1,4 +1,4 @@
-import { ReactNode } from "react"
+import { type ReactNode } from "react"
 import { useNavigate } from "react-router-dom"
 import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"

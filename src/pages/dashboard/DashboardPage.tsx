@@ -2,14 +2,10 @@ import * as React from "react"
 import { Link } from "react-router-dom"
 import { motion, useReducedMotion } from "framer-motion"
 import {
-  Bell,
   ArrowRight,
   Handshake,
   Package,
-  Navigation,
-  CheckCircle2,
   AlertCircle,
-  Upload,
   Plus,
   ChevronRight,
   Lock,
@@ -397,62 +393,7 @@ function ThumbCamera() {
   )
 }
 
-function ThumbDispute() {
-  return (
-    <svg viewBox="0 0 120 120" preserveAspectRatio="xMidYMid slice" className="h-full w-full">
-      <defs>
-        <linearGradient id="tdBg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fef2f2" />
-          <stop offset="1" stopColor="#ffe4e6" />
-        </linearGradient>
-        <linearGradient id="tdTri" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#f87171" />
-          <stop offset="1" stopColor="#dc2626" />
-        </linearGradient>
-      </defs>
-      <rect width="120" height="120" fill="url(#tdBg)" />
-      <ellipse cx="60" cy="100" rx="40" ry="6" fill="#7f1d1d" opacity="0.12" />
-      <rect x="66" y="26" width="42" height="30" rx="8" fill="#fff" stroke="#fecaca" strokeWidth="2" />
-      <rect x="73" y="35" width="24" height="3.5" rx="2" fill="#fca5a5" />
-      <rect x="73" y="43" width="16" height="3.5" rx="2" fill="#fecaca" />
-      <path d="M78 56 l-6 8 l11 -3Z" fill="#fff" />
-      <path d="M40 34 L74 92 H6 Z" fill="url(#tdTri)" />
-      <rect x="36" y="50" width="8" height="22" rx="4" fill="#fff" />
-      <circle cx="40" cy="82" r="4.5" fill="#fff" />
-    </svg>
-  )
-}
-
 /* --- Recent-deal product covers (wide 240x130, center-safe) --- */
-
-function ThumbMewtwo() {
-  return (
-    <svg viewBox="0 0 240 130" preserveAspectRatio="xMidYMid slice" className="h-full w-full">
-      <defs>
-        <linearGradient id="webBg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#eff6ff" />
-          <stop offset="1" stopColor="#e0e7ff" />
-        </linearGradient>
-        <linearGradient id="webHero" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#2F5EFF" />
-          <stop offset="1" stopColor="#7c3aed" />
-        </linearGradient>
-      </defs>
-      <rect width="240" height="130" fill="url(#webBg)" />
-      <rect x="44" y="26" width="152" height="90" rx="12" fill="#fff" stroke="#e2e8f0" strokeWidth="1.5" />
-      <path d="M44 40 h152" stroke="#eef2f7" strokeWidth="1.5" />
-      <circle cx="56" cy="33" r="3" fill="#f87171" />
-      <circle cx="66" cy="33" r="3" fill="#fbbf24" />
-      <circle cx="76" cy="33" r="3" fill="#34d399" />
-      <rect x="56" y="50" width="60" height="42" rx="6" fill="url(#webHero)" />
-      <rect x="126" y="52" width="58" height="6" rx="3" fill="#cbd5e1" />
-      <rect x="126" y="64" width="46" height="5" rx="2.5" fill="#e2e8f0" />
-      <rect x="126" y="74" width="52" height="5" rx="2.5" fill="#e2e8f0" />
-      <rect x="126" y="86" width="34" height="10" rx="5" fill="#2F5EFF" />
-      <rect x="56" y="98" width="128" height="5" rx="2.5" fill="#eef2f7" />
-    </svg>
-  )
-}
 
 function ThumbLeica() {
   return (
