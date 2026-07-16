@@ -34,6 +34,12 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
+import pokemonMain from "@/assets/pokemon-main.jpg"
+import pokemonFront from "@/assets/pokemon-front.jpg"
+import pokemonBack from "@/assets/pokemon-back.jpg"
+import pokemonDetail from "@/assets/pokemon-detail.jpg"
+import pokemonSide from "@/assets/pokemon-side.jpg"
+
 /* -------------------------------------------------------------------------- */
 /*  Types & Constants                                                         */
 /* -------------------------------------------------------------------------- */
@@ -492,9 +498,16 @@ export function CreateDealPage() {
             <div className="rounded-2xl border bg-white overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
               {/* Product Media */}
               <div className="p-6 pb-0 space-y-6">
-                <div className="h-[300px] w-full bg-slate-100 rounded-2xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
+                <div className="h-[300px] w-full bg-slate-100 rounded-2xl border border-slate-100 flex items-center justify-center overflow-hidden relative group">
                   {deal.mainPhoto ? (
-                    <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=800&auto=format&fit=crop" alt="Main Photo" className="h-full w-full object-cover" />
+                    <>
+                      <img src={pokemonMain} alt="Main Photo" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      {/* Camera Capture Time Overlay */}
+                      <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md px-2.5 py-1.5 rounded-lg text-white/90 text-[11px] font-mono font-medium tracking-wide flex items-center gap-1.5 shadow-lg border border-white/10">
+                        <div className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
+                        14:32:05 EST
+                      </div>
+                    </>
                   ) : (
                     <div className="flex flex-col items-center justify-center text-slate-400">
                       <ImageIcon className="h-10 w-10 mb-2 opacity-50" />
@@ -505,15 +518,23 @@ export function CreateDealPage() {
 
                 <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
                   {/* Additional Photos */}
-                  {Array.from({ length: Math.max(1, deal.additionalPhotos) }).map((_, i) => (
-                    <div key={`photo-${i}`} className="h-24 w-24 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
+                  {Array.from({ length: Math.max(1, deal.additionalPhotos) }).map((_, i) => {
+                    const addlPhotos = [pokemonFront, pokemonBack, pokemonSide, pokemonDetail];
+                    return (
+                    <div key={`photo-${i}`} className="h-24 w-24 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden relative group">
                       {deal.additionalPhotos > i ? (
-                        <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=200&auto=format&fit=crop" alt={`Additional Photo ${i + 1}`} className="h-full w-full object-cover opacity-90" />
+                        <>
+                          <img src={addlPhotos[i % addlPhotos.length]} alt={`Additional Photo ${i + 1}`} className="h-full w-full object-cover opacity-90 transition-transform duration-300 group-hover:scale-110" />
+                          {/* Camera Capture Time Overlay */}
+                          <div className="absolute bottom-1 right-1 bg-black/70 px-1 py-0.5 rounded text-white/90 text-[8px] font-mono tracking-wider border border-white/10">
+                            14:32:0{i + 6}
+                          </div>
+                        </>
                       ) : (
                         <ImageIcon className="h-7 w-7 text-slate-300" />
                       )}
                     </div>
-                  ))}
+                  )})}
                   
                   {/* Video */}
                   <div className="h-24 w-24 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
@@ -1219,8 +1240,7 @@ function Step2Verification({
           {deal.mainPhoto ? (
             <div className="mt-3 flex items-center gap-4">
               <div className="group relative flex w-24 aspect-square items-center justify-center overflow-hidden rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600">
-                {/* Simulated Thumbnail */}
-                <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=200&auto=format&fit=crop" alt="Main Photo" className="absolute inset-0 h-full w-full object-cover" />
+                <img src={pokemonMain} alt="Main Photo" className="absolute inset-0 h-full w-full object-cover" />
                 
                 {/* Desktop: hover overlay with Replace + Delete */}
                 <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex">
@@ -1278,15 +1298,21 @@ function Step2Verification({
               const isNext = i === deal.additionalPhotos // the next empty slot to capture
 
               if (filled) {
+                const addlPhotos = [pokemonFront, pokemonBack, pokemonSide, pokemonDetail];
                 return (
                   <div
                     key={i}
                     className="group relative flex aspect-square items-center justify-center overflow-hidden rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600"
                   >
-                    <ImageIcon className="h-6 w-6" />
+                    <img src={addlPhotos[i % addlPhotos.length]} alt={`Additional Photo ${i + 1}`} className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform group-hover:scale-105" />
+                    
+                    {/* Camera Capture Time Overlay */}
+                    <div className="absolute bottom-1 right-1 bg-black/70 px-1 py-0.5 rounded text-white/90 text-[8px] font-mono tracking-wider border border-white/10 z-10 pointer-events-none">
+                      14:32:0{i + 6}
+                    </div>
 
                     {/* Desktop: hover overlay with Replace + Delete */}
-                    <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex">
+                    <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex z-20">
                       <button
                         onClick={replaceAdditionalPhoto}
                         aria-label="Replace photo"

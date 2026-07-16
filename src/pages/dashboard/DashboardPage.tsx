@@ -7,8 +7,6 @@ import {
   Package,
   Plus,
   CaretRight,
-  LockKey,
-  Money,
   CreditCard,
   Wallet,
   ChartBar,
@@ -67,7 +65,7 @@ function WalletHero({ viewMode }: { viewMode: "seller" | "buyer" }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: EASE }}
       className={cn(
-        "relative overflow-hidden rounded-2xl sm:rounded-[2rem] p-6 sm:p-10 text-white shadow-2xl",
+        "relative overflow-hidden rounded-2xl sm:rounded-[2rem] p-6 sm:px-8 sm:py-6 text-white shadow-2xl",
         viewMode === "seller" ? "shadow-blue-900/20" : "shadow-emerald-900/20"
       )}
       style={{ backgroundImage: gradient }}
@@ -84,72 +82,62 @@ function WalletHero({ viewMode }: { viewMode: "seller" | "buyer" }) {
          </svg>
       </div>
 
-      <div className="relative flex items-center justify-between gap-6 z-10">
+      <div className="relative flex flex-col md:flex-row items-center justify-between z-10">
         {/* Left — balances */}
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 flex flex-col justify-center pr-4 sm:pr-8">
           <p className="text-sm font-medium text-white/80 uppercase tracking-wider">Available Balance</p>
-          <div className="relative inline-block">
+          <div className="relative inline-block mt-1">
             {/* Soft Glow */}
             <div className="absolute inset-0 bg-white/20 blur-[40px] rounded-full pointer-events-none" />
-            <p className="mt-2 text-[3rem] sm:text-[4rem] font-extrabold leading-none tracking-tight relative z-10 drop-shadow-md">
+            <p className="text-[3rem] sm:text-[4rem] font-extrabold leading-none tracking-tight relative z-10 drop-shadow-md">
               $<AnimatedCounter value={48250} />
             </p>
           </div>
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            <div className="rounded-[20px] border border-white/10 bg-white/10 px-5 py-4 backdrop-blur-md shadow-inner">
-              <p className="flex items-center gap-2 text-xs font-semibold text-white/80 uppercase tracking-wide">
-                <LockKey weight="bold" className="h-4 w-4" /> Funds On Hold
-              </p>
-              <p className="mt-1.5 text-lg sm:text-xl font-bold tracking-tight">
-                $126,400
-              </p>
-            </div>
-            <div className="rounded-[20px] border border-white/10 bg-white/10 px-5 py-4 backdrop-blur-md shadow-inner">
-              <p className="flex items-center gap-2 text-xs font-semibold text-white/80 uppercase tracking-wide">
-                <Money weight="bold" className="h-4 w-4" /> Ready To Withdraw
-              </p>
-              <p className="mt-1.5 text-lg sm:text-xl font-bold tracking-tight">
-                $42,180
-              </p>
-            </div>
-          </div>
-
-          <button className={cn(
-            "group mt-8 flex items-center gap-2 rounded-2xl bg-white px-7 py-4 text-sm font-bold shadow-xl shadow-black/10 transition-transform duration-200 hover:-translate-y-1 active:scale-95",
-            viewMode === "seller" ? "text-[#1E3FD6]" : "text-emerald-700"
-          )}>
-            View Wallet
-            <ArrowRight weight="bold" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-          </button>
         </div>
 
-        {/* Right — glassmorphism wallet illustration (animated) */}
-        <motion.div 
-          animate={reduce ? {} : { y: [-5, 5, -5] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-          className="relative hidden h-64 w-72 shrink-0 lg:block opacity-60 pointer-events-none scale-125 origin-right pr-8"
-        >
-          <div className="absolute right-10 top-2 h-36 w-52 rotate-[-12deg] rounded-3xl border border-white/30 bg-white/10 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-xl">
-            <div className="h-7 w-10 rounded-lg bg-gradient-to-br from-amber-200 to-yellow-400/90 shadow-inner" />
-            <div className="mt-8 h-2.5 w-28 rounded-full bg-white/50" />
-            <div className="mt-3 flex items-center justify-between">
-              <div className="h-2.5 w-16 rounded-full bg-white/30" />
-              <CreditCard weight="fill" className="h-6 w-6 text-white/80" />
-            </div>
+        {/* Right — glassmorphism wallet illustration & CTA */}
+        <div className="w-[280px] lg:w-[340px] flex-shrink-0 flex items-center justify-center relative mr-2 lg:mr-6 py-2">
+          {/* Unified Composition Container */}
+          <div className="relative w-full h-[220px] flex items-center justify-center">
+            {/* Illustration Background (z-index 10) */}
+            <motion.div 
+              animate={reduce ? {} : { y: [-3, 3, -3] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0 hidden lg:flex items-center justify-center opacity-60 pointer-events-none z-10"
+            >
+              <div className="relative h-48 w-52 scale-110 origin-center">
+                <div className="absolute left-1/2 top-0 h-36 w-52 -translate-x-1/2 rotate-[-12deg] rounded-3xl border border-white/30 bg-white/10 p-5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-xl">
+                  <div className="h-7 w-10 rounded-lg bg-gradient-to-br from-amber-200 to-yellow-400/90 shadow-inner" />
+                  <div className="mt-8 h-2.5 w-28 rounded-full bg-white/50" />
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="h-2.5 w-16 rounded-full bg-white/30" />
+                    <CreditCard weight="fill" className="h-6 w-6 text-white/80" />
+                  </div>
+                </div>
+                <div className="absolute left-1/2 top-20 h-32 w-48 -translate-x-1/2 rotate-[10deg] rounded-3xl border border-white/25 bg-white/[0.08] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="h-2.5 w-24 rounded-full bg-white/40" />
+                    <div className="h-7 w-7 rounded-full bg-white/30" />
+                  </div>
+                  <div className="mt-6 h-2.5 w-32 rounded-full bg-white/25" />
+                  <div className="mt-3 h-2.5 w-20 rounded-full bg-white/20" />
+                </div>
+                <div className="absolute top-4 left-[-16px] flex h-16 w-16 items-center justify-center rounded-2xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-xl">
+                  <Wallet weight="duotone" className="h-9 w-9 text-white" />
+                </div>
+              </div>
+            </motion.div>
+            
+            {/* View Wallet Button (z-index 20) */}
+            <button className={cn(
+              "group relative z-20 flex items-center justify-center gap-2 rounded-2xl bg-white px-8 py-3.5 text-sm font-bold shadow-xl shadow-black/10 transition-transform duration-200 hover:-translate-y-1 active:scale-95 w-full max-w-[200px] mt-12",
+              viewMode === "seller" ? "text-[#1E3FD6]" : "text-emerald-700"
+            )}>
+              View Wallet
+              <ArrowRight weight="bold" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+            </button>
           </div>
-          <div className="absolute right-0 top-28 h-32 w-48 rotate-[10deg] rounded-3xl border border-white/25 bg-white/[0.08] p-5 shadow-[0_8px_32px_rgba(0,0,0,0.1)] backdrop-blur-lg">
-            <div className="flex items-center justify-between">
-              <div className="h-2.5 w-24 rounded-full bg-white/40" />
-              <div className="h-7 w-7 rounded-full bg-white/30" />
-            </div>
-            <div className="mt-6 h-2.5 w-32 rounded-full bg-white/25" />
-            <div className="mt-3 h-2.5 w-20 rounded-full bg-white/20" />
-          </div>
-          <div className="absolute top-4 right-48 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/30 bg-white/20 shadow-2xl backdrop-blur-xl">
-            <Wallet weight="duotone" className="h-9 w-9 text-white" />
-          </div>
-        </motion.div>
+        </div>
       </div>
     </motion.section>
   )
