@@ -26,7 +26,7 @@ const ROTATING = [
 const STATS = [
   { value: 12.8, prefix: "$", suffix: "M", decimals: 1, label: "Protected" },
   { value: 18432, suffix: "", decimals: 0, label: "Secure deals" },
-  { value: 99.8, suffix: "%", decimals: 1, label: "Successful" },
+  { value: 1, prefix: "<", suffix: "%", decimals: 0, label: "Disputes" },
   { value: 0, suffix: "", decimals: 0, label: "Chargeback fraud" },
 ]
 
@@ -63,7 +63,7 @@ export function HeroSection() {
   return (
     <section
       onMouseMove={handleMouse}
-      className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28"
+      className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24"
     >
       {/* ambient gradient blobs */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -158,7 +158,7 @@ export function HeroSection() {
                 <DialogHeader className="sr-only">
                   <DialogTitle>How TrustLayer works</DialogTitle>
                   <DialogDescription>
-                    An animated walkthrough of a protected escrow transaction.
+                    An animated walkthrough of a protected payment transaction.
                   </DialogDescription>
                 </DialogHeader>
                 <LiveEscrowJourney interval={2200} className="mx-auto" />

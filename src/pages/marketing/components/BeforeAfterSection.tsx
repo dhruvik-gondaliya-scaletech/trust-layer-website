@@ -4,17 +4,17 @@ import { SectionHeading } from "../lib/primitives"
 import { cn } from "@/lib/utils"
 
 const WITHOUT = [
-  "Send money and just hope they ship",
-  "No idea if the seller is even real",
-  "Chargebacks, fakes and ghosting",
-  "Zero protection when it goes wrong",
+  "Send money and hope the item ships",
+  "No way to verify the seller is real",
+  "Risk of chargebacks, fakes, or ghosting",
+  "Zero protection if something goes wrong",
 ]
 
 const WITH = [
-  "Money held safely in escrow first",
-  "Both sides verified before shipping",
+  "Money held safely in the TrustLayer Payment Vault first",
+  "Both sides are verified before shipping",
   "Live tracking on every package",
-  "Full protection and dispute support",
+  "Full protection and dedicated support",
 ]
 
 export function BeforeAfterSection() {
@@ -58,7 +58,7 @@ export function BeforeAfterSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="relative overflow-hidden rounded-3xl border border-success/30 bg-gradient-to-br from-success/[0.07] to-primary/[0.05] p-8 shadow-lg shadow-success/5"
+            className="relative overflow-hidden rounded-3xl border border-success/30 bg-gradient-to-br from-success/[0.07] to-primary/[0.05] p-8 shadow-soft-lg transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-success/10"
           >
             <div className="absolute right-5 top-5 rounded-full bg-success px-3 py-1 text-xs font-bold text-white">
               Recommended
@@ -69,7 +69,7 @@ export function BeforeAfterSection() {
               </span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-success">With TrustLayer</p>
-                <p className="text-lg font-bold text-foreground">Paying through escrow</p>
+                <p className="text-lg font-bold text-foreground">Paying through TrustLayer</p>
               </div>
             </div>
             <ul className="space-y-3">

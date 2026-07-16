@@ -3,11 +3,9 @@ import { HeroSection } from "./components/HeroSection"
 import { TrustBanner } from "./components/TrustBanner"
 import { ScrollStorySection } from "./components/ScrollStorySection"
 import { HowItWorksSection } from "./components/HowItWorksSection"
-import { WhyTrustLayerSection } from "./components/WhyTrustLayerSection"
+
 import { EscrowDemoSection } from "./components/EscrowDemoSection"
-import { InActionSection } from "./components/InActionSection"
 import { BeforeAfterSection } from "./components/BeforeAfterSection"
-import { TrustFeaturesSection } from "./components/TrustFeaturesSection"
 import { TestimonialsSection } from "./components/TestimonialsSection"
 import { FAQSection } from "./components/FAQSection"
 import { FinalCTASection } from "./components/FinalCTASection"
@@ -20,13 +18,10 @@ export function LandingPage() {
       <main>
         <HeroSection />
         <TrustBanner />
-        <ScrollStorySection />
         <HowItWorksSection />
-        <WhyTrustLayerSection />
+        <ScrollStorySection />
         <EscrowDemoSection />
-        <InActionSection />
         <BeforeAfterSection />
-        <TrustFeaturesSection />
         <TestimonialsSection />
         <FAQSection />
         <FinalCTASection />

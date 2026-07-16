@@ -61,6 +61,10 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			boxShadow: {
+				'soft': '0 4px 20px -2px rgba(0,0,0,0.04)',
+				'soft-lg': '0 10px 40px -5px rgba(0,0,0,0.06)',
+			},
 			fontFamily: {
 				sans: [
 					'Inter',

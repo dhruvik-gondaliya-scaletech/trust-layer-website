@@ -17,16 +17,16 @@ import { SectionHeading } from "../lib/primitives"
 
 /* phase: 0 idle · 1 paid/escrow · 2 shipped · 3 confirmed · 4 released/complete */
 const ACTIONS = [
-  { label: "Buyer pays $420", hint: "The buyer sends payment — but it goes to TrustLayer, not the seller." },
+  { label: "Buyer pays $420", hint: "The buyer securely sends the payment to TrustLayer." },
   { label: "Seller ships item", hint: "The seller sees the funds are secured and ships with confidence." },
-  { label: "Buyer confirms delivery", hint: "The package arrives and the buyer checks everything is right." },
+  { label: "Buyer confirms delivery", hint: "The package arrives and the buyer checks that everything is right." },
   { label: "Release the funds", hint: "The buyer taps confirm and the money is released to the seller." },
 ]
 
 const STEP_STATE = [
   "Waiting for the buyer to pay.",
-  "$420 is locked safely in escrow.",
-  "Item shipped — funds still protected.",
+  "$420 is locked safely in the vault.",
+  "Item shipped. Funds remain protected.",
   "Delivery confirmed by the buyer.",
   "Funds released. Deal complete!",
 ]
@@ -42,8 +42,8 @@ export function EscrowDemoSection() {
     <section id="demo" className="bg-secondary/40 py-24">
       <div className="mx-auto max-w-[1200px] px-6">
         <SectionHeading
-          eyebrow="Live escrow demo"
-          title="See exactly how escrow protects you."
+          eyebrow="LIVE PAYMENT PROTECTION DEMO"
+          title="See exactly how your money is protected."
           subtitle="No sign-up. Just tap through a real deal and watch where the money goes."
           className="mb-16"
         />
@@ -107,7 +107,7 @@ export function EscrowDemoSection() {
 
           {/* Stage */}
           <div className="order-1 lg:order-2">
-            <div className="relative overflow-hidden rounded-[28px] border border-border/70 bg-white p-6 shadow-[0_30px_80px_-30px_rgba(37,99,235,0.3)]">
+            <div className="relative overflow-hidden rounded-[28px] border border-border/70 bg-white p-6 shadow-soft-lg">
               <div className="pointer-events-none absolute inset-0 bg-grid-faint opacity-60" />
               <div className="relative z-10">
                 {/* actors + vault */}
@@ -139,7 +139,7 @@ export function EscrowDemoSection() {
                         </motion.span>
                       )}
                     </motion.div>
-                    <span className="text-xs font-semibold text-muted-foreground">Escrow vault</span>
+                    <span className="text-xs font-semibold text-muted-foreground">Payment Vault</span>
                   </div>
 
                   <DemoActor icon={<Store className="h-7 w-7" />} label="Seller" active={phase === 1 || phase === 3} done={complete} />

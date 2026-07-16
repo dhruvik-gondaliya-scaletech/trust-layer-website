@@ -11,12 +11,12 @@ import {
 import { SectionHeading } from "../lib/primitives"
 
 const STEPS = [
-  { icon: FilePlus2, title: "Create Deal", desc: "Set item, price & terms — get a secure link." },
-  { icon: CreditCard, title: "Buyer Pays", desc: "Payment is made into TrustLayer, not the seller." },
-  { icon: ShieldCheck, title: "Funds Protected", desc: "Money is locked safely in escrow." },
-  { icon: Truck, title: "Seller Ships", desc: "Seller ships knowing they'll get paid." },
-  { icon: PackageCheck, title: "Buyer Receives", desc: "Buyer inspects and confirms the item." },
-  { icon: BadgeDollarSign, title: "Funds Released", desc: "Money is released to the seller. Done." },
+  { icon: FilePlus2, title: "Create Deal", desc: "Set your price and get a secure link to share." },
+  { icon: CreditCard, title: "Buyer Pays", desc: "The buyer pays directly into the TrustLayer vault." },
+  { icon: ShieldCheck, title: "Funds Protected", desc: "Your money is held securely in the TrustLayer Vault." },
+  { icon: Truck, title: "Seller Ships", desc: "The seller ships the item knowing the money is ready." },
+  { icon: PackageCheck, title: "Buyer Receives", desc: "The buyer receives the item and confirms everything is right." },
+  { icon: BadgeDollarSign, title: "Funds Released", desc: "Money is released to the seller." },
 ]
 
 export function HowItWorksSection() {
@@ -34,7 +34,6 @@ export function HowItWorksSection() {
         <SectionHeading
           eyebrow="The flow"
           title="Six steps. Zero guesswork."
-          subtitle="Watch a deal go from handshake to money-in-the-bank — safely, every time."
           className="mb-20"
         />
 

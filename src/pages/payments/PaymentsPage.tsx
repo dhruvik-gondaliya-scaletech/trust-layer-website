@@ -2,7 +2,6 @@ import { useMemo, useState } from "react"
 import { MainLayout } from "@/components/layout/MainLayout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -10,14 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EmptyState } from "@/components/shared/EmptyState"
 import { TransactionDetails } from "@/features/payments/components/TransactionDetails"
@@ -25,7 +17,6 @@ import {
   TRANSACTIONS,
   TX_STATUSES,
   TX_METHODS,
-  STATUS_STYLES,
   signedAmount,
   formatCurrency,
   type Transaction,
@@ -127,6 +118,25 @@ export function PaymentsPage() {
           </Button>
         </div>
 
+        {/* Wallet Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
+          <div className="rounded-xl border bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+            <p className="text-sm font-medium text-slate-500">Available Balance</p>
+            <p className="text-3xl font-bold mt-2">$48,250.00</p>
+          </div>
+          <div className="rounded-xl border bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+            <p className="text-sm font-medium text-slate-500">Funds on Hold</p>
+            <p className="text-3xl font-bold mt-2">$12,400.00</p>
+          </div>
+          <div className="rounded-xl border bg-white p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] flex flex-col justify-between items-start">
+            <div>
+              <p className="text-sm font-medium text-slate-500">Ready to Withdraw</p>
+              <p className="text-3xl font-bold mt-2 text-emerald-600">$35,850.00</p>
+            </div>
+            <Button className="mt-4 w-full h-11 text-base">Withdraw Funds</Button>
+          </div>
+        </div>
+
         {/* Type tabs */}
         <Tabs value={tab} onValueChange={update(setTab)}>
           <TabsList className="h-auto flex-wrap justify-start">
@@ -221,86 +231,52 @@ export function PaymentsPage() {
           </Button>
         </div>
 
-        {/* Enterprise table */}
-        <div className="overflow-hidden rounded-lg border bg-card shadow-sm">
+        {/* Mobile-First Transaction Cards */}
+        <div className="space-y-4">
           {pageRows.length > 0 ? (
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/40 hover:bg-muted/40">
-                  <TableHead className="pl-6">Transaction</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Counterparty</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="pr-6 text-right">Amount</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {pageRows.map((tx) => (
-                  <TableRow
-                    key={tx.id}
-                    onClick={() => setSelected(tx)}
-                    className="cursor-pointer"
-                  >
-                    <TableCell className="pl-6">
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                            tx.direction === "in"
-                              ? "bg-green-500/10 text-green-600"
-                              : "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {tx.direction === "in" ? (
-                            <ArrowDownLeft className="h-4 w-4" />
-                          ) : (
-                            <ArrowUpRight className="h-4 w-4" />
-                          )}
-                        </span>
-                        <div className="min-w-0">
-                          <div className="truncate font-medium">{tx.description}</div>
-                          <div className="font-mono text-xs text-muted-foreground">
-                            {tx.id}
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="font-normal">
-                        {tx.type}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {tx.counterparty}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">{tx.method}</TableCell>
-                    <TableCell className="whitespace-nowrap text-muted-foreground">
-                      {tx.displayDate}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={STATUS_STYLES[tx.status]}>{tx.status}</Badge>
-                    </TableCell>
-                    <TableCell
-                      className={`whitespace-nowrap pr-6 text-right font-semibold ${
-                        tx.direction === "in" ? "text-green-600" : "text-foreground"
-                      }`}
-                    >
-                      {signedAmount(tx)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            pageRows.map((tx) => (
+              <div
+                key={tx.id}
+                onClick={() => setSelected(tx)}
+                className="flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-xl border bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] cursor-pointer hover:border-primary/50 transition-colors gap-4"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
+                    tx.direction === "in"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : "bg-slate-100 text-slate-600"
+                  }`}>
+                    {tx.direction === "in" ? (
+                      <ArrowDownLeft className="h-6 w-6" />
+                    ) : (
+                      <ArrowUpRight className="h-6 w-6" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 text-base">{tx.description}</h3>
+                    <div className="flex flex-wrap items-center gap-2 mt-1 text-sm text-slate-500">
+                      <span>{tx.displayDate}</span>
+                      <span>•</span>
+                      <span className="font-medium text-slate-700">{tx.status}</span>
+                      <span>•</span>
+                      <span className="truncate max-w-[120px] sm:max-w-[200px]">{tx.counterparty}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className={`font-semibold text-lg sm:text-right ${
+                  tx.direction === "in" ? "text-emerald-600" : "text-slate-900"
+                }`}>
+                  {signedAmount(tx)}
+                </div>
+              </div>
+            ))
           ) : (
-            <div className="p-6">
-              <EmptyState
-                title="No transactions found"
-                description="No transactions match the current filters. Try widening your search or resetting filters."
-                action={{ label: "Reset filters", onClick: resetFilters }}
-                className="border-none bg-transparent"
-              />
-            </div>
+            <EmptyState
+              title="No transactions found"
+              description="No transactions match the current filters. Try widening your search or resetting filters."
+              action={{ label: "Reset filters", onClick: resetFilters }}
+              className="rounded-xl border bg-white shadow-[0_2px_10px_rgba(0,0,0,0.02)] py-12"
+            />
           )}
 
           {/* Pagination footer */}

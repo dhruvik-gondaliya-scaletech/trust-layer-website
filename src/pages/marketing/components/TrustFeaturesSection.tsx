@@ -14,7 +14,7 @@ const ORBIT = [
   { icon: UserCheck, label: "Verified users", color: "#2563eb" },
   { icon: CreditCard, label: "Encrypted payments", color: "#22c55e" },
   { icon: ScanFace, label: "Fraud detection", color: "#a855f7" },
-  { icon: LockKeyhole, label: "Escrow custody", color: "#f59e0b" },
+  { icon: LockKeyhole, label: "Vault Custody", color: "#f59e0b" },
   { icon: Scale, label: "Dispute resolution", color: "#0ea5e9" },
 ]
 
@@ -32,7 +32,7 @@ export function TrustFeaturesSection() {
   const radius = 150
 
   return (
-    <section id="security" className="relative overflow-hidden bg-secondary/40 py-24">
+    <section id="security" className="relative overflow-hidden bg-secondary/40 py-16">
       <div className="mx-auto grid max-w-[1200px] grid-cols-1 items-center gap-16 px-6 lg:grid-cols-2">
         {/* Orbit visual */}
         <div className="relative order-2 flex h-[420px] items-center justify-center lg:order-1">
@@ -62,7 +62,7 @@ export function TrustFeaturesSection() {
                     className="flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
                   >
                     <div
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/70 bg-white shadow-lg"
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl border border-border/70 bg-white shadow-soft transition-transform hover:scale-110"
                       style={{ color: item.color }}
                     >
                       <item.icon className="h-6 w-6" />

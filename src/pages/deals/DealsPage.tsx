@@ -97,8 +97,8 @@ export function DealsPage() {
         </div>
 
         {/* Top filters */}
-        <div className="rounded-lg border bg-card p-4 shadow-sm">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div className="rounded-xl border bg-white p-5 shadow-[0_2px_10px_rgba(0,0,0,0.02)] space-y-5">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
             {/* Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -106,26 +106,12 @@ export function DealsPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search deals, parties, or IDs…"
-                className="pl-9"
+                className="pl-9 h-11 rounded-lg"
               />
             </div>
 
             {/* Filter selects */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:flex lg:items-center">
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="lg:w-[140px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All statuses</SelectItem>
-                  {STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:flex lg:items-center">
               <Select value={price} onValueChange={setPrice}>
                 <SelectTrigger className="lg:w-[160px]">
                   <SelectValue placeholder="Price" />
@@ -154,7 +140,7 @@ export function DealsPage() {
               </Select>
 
               <Select value={sort} onValueChange={setSort}>
-                <SelectTrigger className="lg:w-[180px]">
+                <SelectTrigger className="lg:w-[180px] h-11 rounded-lg">
                   <SelectValue placeholder="Sort" />
                 </SelectTrigger>
                 <SelectContent>
@@ -166,6 +152,25 @@ export function DealsPage() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          
+          {/* Status Filter Chips */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button 
+              onClick={() => setStatus("all")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${status === "all" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+            >
+              All Deals
+            </button>
+            {STATUSES.map(s => (
+              <button
+                key={s}
+                onClick={() => setStatus(s)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${status === s ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+              >
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
           </div>
         </div>
 

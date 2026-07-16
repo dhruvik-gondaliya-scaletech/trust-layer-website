@@ -12,7 +12,7 @@ interface Faq {
 const FAQS: Faq[] = [
   {
     q: "How does TrustLayer actually work?",
-    a: "The buyer pays into TrustLayer instead of paying the seller directly. We hold the money safely in escrow and tell the seller to ship. Once the buyer confirms the item is as described, we release the funds to the seller.",
+    a: "The buyer pays into TrustLayer instead of paying the seller directly. We hold the money safely in the vault and tell the seller to ship. Once the buyer confirms the item is as described, we release the funds to the seller.",
   },
   {
     q: "When does the seller get paid?",
@@ -32,7 +32,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "How much does TrustLayer cost?",
-    a: "Creating an account is free. A small, transparent escrow fee applies per completed transaction — always shown up front before anyone pays. No hidden charges.",
+    a: "Creating an account is free. A small, transparent protection fee applies per completed transaction — always shown up front before anyone pays. No hidden charges.",
   },
 ]
 

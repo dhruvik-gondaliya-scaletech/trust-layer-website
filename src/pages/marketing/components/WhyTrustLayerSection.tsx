@@ -28,7 +28,7 @@ function Cell({
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-border/70 bg-white p-7 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5",
+        "group relative overflow-hidden rounded-3xl border border-border/70 bg-white p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5",
         className,
       )}
     >
@@ -44,7 +44,7 @@ export function WhyTrustLayerSection() {
         <SectionHeading
           eyebrow="Why TrustLayer"
           title="Everything a safe deal needs — in one layer."
-          subtitle="Protection for both sides, real escrow, and fraud detection working quietly in the background."
+          subtitle="Protection for both sides, real security, and fraud detection working quietly in the background."
           className="mb-16"
         />
 
@@ -74,7 +74,7 @@ export function WhyTrustLayerSection() {
 
           {/* Live demo teaser */}
           <Cell className="md:col-span-2 flex flex-col justify-between bg-primary text-white" delay={0.05}>
-            <a href="#demo" className="absolute inset-0" aria-label="Try the live escrow demo" />
+            <a href="#demo" className="absolute inset-0" aria-label="Try the live payment protection demo" />
             <div className="flex items-start justify-between">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
                 <Play className="h-3 w-3 fill-current" /> Interactive
@@ -82,7 +82,7 @@ export function WhyTrustLayerSection() {
               <ArrowUpRight className="h-5 w-5 opacity-70 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
             </div>
             <div>
-              <h3 className="text-xl font-bold">Try the live escrow demo</h3>
+              <h3 className="text-xl font-bold">Try the live protection demo</h3>
               <p className="mt-1 text-sm text-white/80">
                 Click through a real transaction and watch the money move.
               </p>
@@ -107,10 +107,10 @@ export function WhyTrustLayerSection() {
             delay={0.15}
           />
 
-          {/* Escrow */}
+          {/* Vault */}
           <FeatureCell
             icon={<LockKeyhole className="h-6 w-6" />}
-            title="Real escrow"
+            title="Secure Vault"
             desc="Funds held in a regulated trust account — never with the seller."
             className="md:col-span-2"
             delay={0.2}

@@ -1,5 +1,6 @@
 import * as React from "react"
-import { motion, AnimatePresence, useInView, useReducedMotion } from "framer-motion"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
+import type { PanInfo } from "framer-motion"
 import {
   Search,
   ShieldCheck,
@@ -12,6 +13,8 @@ import {
   MapPin,
   ShieldAlert,
   Clock,
+  ArrowRight,
+  ArrowLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -19,93 +22,158 @@ const CHAPTERS = [
   {
     kicker: "Chapter 1",
     title: "You found something online.",
-    body: "A pair of sneakers on Instagram. A camera in a Facebook group. The price is great — but the seller is a stranger, and they want the money first.",
+    body: "A pair of sneakers on Instagram. A camera in a Facebook group. The price looks great, but you don't know the seller yet, and they want the money first.",
   },
   {
     kicker: "Chapter 2",
     title: "You pay. The money is protected.",
-    body: "Instead of sending cash into the void, your payment flows into TrustLayer escrow. The seller can see it's funded — but can't touch it yet.",
+    body: "Instead of sending cash into the void, your payment flows into the TrustLayer vault. The seller can see it's funded, but they can't touch it yet.",
   },
   {
     kicker: "Chapter 3",
     title: "The seller ships with confidence.",
-    body: "Knowing the money is real and waiting, the seller ships right away. You follow the package with live tracking, every step of the way.",
+    body: "Knowing the money is real and waiting, the seller ships right away. You follow the package with live tracking every step of the way.",
   },
   {
     kicker: "Chapter 4",
     title: "You confirm. Everyone wins.",
-    body: "The box arrives, everything checks out, you tap confirm — and the funds release instantly. No scams, no chargebacks, no regrets.",
+    body: "The box arrives, everything checks out, you tap confirm, and the funds release instantly. No scams, no chargebacks, no regrets.",
   },
 ]
 
 export function ScrollStorySection() {
   const [active, setActive] = React.useState(0)
+  const [paused, setPaused] = React.useState(false)
+  const total = CHAPTERS.length
+
+  React.useEffect(() => {
+    if (paused) return
+    const id = setInterval(() => {
+      setActive((a) => (a + 1) % total)
+    }, 5500)
+    return () => clearInterval(id)
+  }, [paused, total])
+
+  const next = () => {
+    setPaused(true)
+    setActive((a) => (a + 1) % total)
+  }
+
+  const prev = () => {
+    setPaused(true)
+    setActive((a) => (a - 1 + total) % total)
+  }
+
+  const handleDragEnd = (_e: any, info: PanInfo) => {
+    if (info.offset.x < -50) {
+      next()
+    } else if (info.offset.x > 50) {
+      prev()
+    }
+  }
 
   return (
-    <section className="relative bg-gradient-to-b from-secondary/40 via-background to-background py-24">
-      <div className="mx-auto grid max-w-[1200px] grid-cols-1 gap-12 px-6 lg:grid-cols-2">
-        {/* Sticky visual */}
-        <div className="hidden lg:block">
-          <div className="sticky top-28 flex h-[560px] items-center justify-center">
-            <StoryVisual active={active} />
+    <section id="how-it-works" className="relative bg-gradient-to-b from-secondary/40 via-background to-background py-24 overflow-hidden">
+      <div className="mx-auto max-w-[1200px] px-6">
+        
+        {/* Carousel Container */}
+        <div 
+          className="relative grid grid-cols-1 items-center gap-12 lg:grid-cols-2"
+          onMouseEnter={() => setPaused(true)}
+          onTouchStart={() => setPaused(true)}
+        >
+          {/* Mobile Visual (Shows first on small screens) */}
+          <div className="flex justify-center lg:hidden">
+            <motion.div
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={handleDragEnd}
+              className="w-full cursor-grab active:cursor-grabbing flex justify-center"
+            >
+              <StoryVisual active={active} />
+            </motion.div>
           </div>
-        </div>
 
-        {/* Scrolling chapters */}
-        <div className="flex flex-col">
-          {CHAPTERS.map((c, i) => (
-            <Chapter key={i} index={i} onActive={setActive} isActive={active === i}>
-              {/* Inline visual on mobile */}
-              <div className="mb-8 flex justify-center lg:hidden">
-                <StoryVisual active={i} />
+          {/* Text Content */}
+          <div className="flex flex-col">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+                className="flex min-h-[200px] flex-col justify-center"
+              >
+                <span className="text-sm font-semibold uppercase tracking-wider text-primary">
+                  {CHAPTERS[active].kicker}
+                </span>
+                <h3 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+                  {CHAPTERS[active].title}
+                </h3>
+                <p className="mt-4 max-w-md text-lg leading-relaxed text-muted-foreground">
+                  {CHAPTERS[active].body}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation & Progress */}
+            <div className="mt-8 flex items-center gap-8">
+              {/* Progress Bars */}
+              <div className="flex items-center gap-2">
+                {CHAPTERS.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setPaused(true)
+                      setActive(i)
+                    }}
+                    className={cn(
+                      "h-2 rounded-full transition-all duration-500",
+                      active === i ? "w-8 bg-primary" : "w-2 bg-border hover:bg-primary/40"
+                    )}
+                    aria-label={`Go to chapter ${i + 1}`}
+                  />
+                ))}
               </div>
-              <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-                {c.kicker}
-              </span>
-              <h3 className="mt-3 text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
-                {c.title}
-              </h3>
-              <p className="mt-4 max-w-md text-lg leading-relaxed text-muted-foreground">
-                {c.body}
-              </p>
-            </Chapter>
-          ))}
+
+              {/* Prev / Next */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={prev}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground transition-colors hover:border-primary hover:text-primary shadow-sm"
+                  aria-label="Previous chapter"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={next}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground transition-colors hover:border-primary hover:text-primary shadow-sm"
+                  aria-label="Next chapter"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Visual (Shows on right for large screens) */}
+          <div className="hidden lg:flex justify-center">
+             <motion.div
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={handleDragEnd}
+              className="w-full cursor-grab active:cursor-grabbing flex justify-center"
+            >
+              <StoryVisual active={active} />
+            </motion.div>
+          </div>
+
         </div>
       </div>
     </section>
-  )
-}
-
-function Chapter({
-  index,
-  onActive,
-  isActive,
-  children,
-}: {
-  index: number
-  onActive: (i: number) => void
-  isActive: boolean
-  children: React.ReactNode
-}) {
-  const ref = React.useRef<HTMLDivElement>(null)
-  const inView = useInView(ref, { margin: "-45% 0px -45% 0px" })
-
-  React.useEffect(() => {
-    if (inView) onActive(index)
-  }, [inView, index, onActive])
-
-  return (
-    <div
-      ref={ref}
-      className="flex min-h-[70vh] flex-col justify-center lg:min-h-screen"
-    >
-      <motion.div
-        animate={{ opacity: isActive ? 1 : 0.35 }}
-        transition={{ duration: 0.4 }}
-      >
-        {children}
-      </motion.div>
-    </div>
   )
 }
 
@@ -526,7 +594,7 @@ function SceneProtected() {
         </motion.div>
       </div>
       <div className="rounded-full bg-success/10 px-4 py-1.5 text-sm font-bold text-success">
-        $420 locked in escrow
+        $420 locked in the vault
       </div>
       <p className="text-center text-sm font-medium text-muted-foreground">
         The seller can see it's funded — but can't touch it yet.

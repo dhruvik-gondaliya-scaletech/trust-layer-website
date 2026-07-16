@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils"
 const STEPS = [
   { label: "Seller lists the item", actor: "seller" },
   { label: "Buyer joins the deal", actor: "buyer" },
-  { label: "Payment secured in escrow", actor: "money-in" },
+  { label: "Payment secured in vault", actor: "money-in" },
   { label: "Seller ships the package", actor: "ship" },
   { label: "Buyer confirms delivery", actor: "confirm" },
   { label: "Funds released to seller", actor: "money-out" },
@@ -54,6 +54,7 @@ export function LiveEscrowJourney({ interval = 2400, className }: JourneyProps) 
     return () => window.clearInterval(id)
   }, [interval, reduce])
 
+  // For layout matching
   const fundsInEscrow = step >= 2 && step < 5
   const shieldActive = step >= 2
   const done = step === 6
@@ -61,7 +62,7 @@ export function LiveEscrowJourney({ interval = 2400, className }: JourneyProps) 
   return (
     <div
       className={cn(
-        "relative w-full max-w-[340px] rounded-[28px] border border-border/70 bg-white/90 p-5 shadow-[0_30px_80px_-30px_rgba(37,99,235,0.35)] backdrop-blur-sm",
+        "relative w-full max-w-[340px] rounded-[28px] border border-border/70 bg-white/90 p-5 shadow-xl backdrop-blur-sm",
         className,
       )}
     >
@@ -69,7 +70,7 @@ export function LiveEscrowJourney({ interval = 2400, className }: JourneyProps) 
       <div className="flex items-center justify-between px-1 pb-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-5 w-5 text-primary" />
-          <span className="text-sm font-semibold text-foreground">TrustLayer Escrow</span>
+          <span className="text-sm font-semibold text-foreground">TrustLayer Vault</span>
         </div>
         <span className="flex items-center gap-1.5 text-xs font-medium text-success">
           <span className="relative flex h-2 w-2">

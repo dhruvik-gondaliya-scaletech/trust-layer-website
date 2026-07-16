@@ -10,13 +10,13 @@ interface Review {
 }
 
 const REVIEWS: Review[] = [
-  { name: "Maya R.", role: "Sneaker buyer", gradient: "from-primary to-violet-500", quote: "Bought $600 of sneakers off Instagram. Escrow meant I actually slept that night." },
+  { name: "Maya R.", role: "Sneaker buyer", gradient: "from-primary to-violet-500", quote: "Bought $600 of sneakers off Instagram. Payment protection meant I actually slept that night." },
   { name: "Dek O.", role: "Camera seller", gradient: "from-emerald-500 to-teal-500", quote: "As a seller I finally know I'll get paid. Shipped same day, funds landed clean." },
   { name: "Priya S.", role: "Watch collector", gradient: "from-amber-500 to-orange-500", quote: "A $2k watch from a Discord stranger. TrustLayer made it feel like buying from a store." },
-  { name: "Leon M.", role: "Marketplace flipper", gradient: "from-sky-500 to-blue-500", quote: "I do 10+ deals a week now. Zero chargebacks since I switched to escrow." },
+  { name: "Leon M.", role: "Marketplace flipper", gradient: "from-sky-500 to-blue-500", quote: "I do 10+ deals a week now. Zero chargebacks since I switched to Payment Protection." },
   { name: "Aria K.", role: "GPU buyer", gradient: "from-fuchsia-500 to-pink-500", quote: "Almost got scammed twice before. Now I just refuse to pay without TrustLayer." },
   { name: "Tom B.", role: "Furniture seller", gradient: "from-rose-500 to-red-500", quote: "Buyer confirmed, money released instantly. Smoothest sale I've ever done." },
-  { name: "Noor H.", role: "Vinyl trader", gradient: "from-indigo-500 to-purple-500", quote: "Tracking + escrow in one place. My buyers trust me way more now." },
+  { name: "Noor H.", role: "Vinyl trader", gradient: "from-indigo-500 to-purple-500", quote: "Live tracking plus payment protection in one place. My buyers trust me way more now." },
   { name: "Sam W.", role: "Console buyer", gradient: "from-cyan-500 to-sky-500", quote: "Paid for a PS5 on Facebook, held safe till it arrived. Exactly as described." },
 ]
 
@@ -61,7 +61,7 @@ function Marquee({ reviews, reverse = false }: { reviews: Review[]; reverse?: bo
 
 function ReviewCard({ review }: { review: Review }) {
   return (
-    <figure className="w-[340px] shrink-0 rounded-3xl border border-border/70 bg-white p-6 shadow-sm transition-shadow hover:shadow-lg">
+    <figure className="w-[340px] shrink-0 rounded-3xl border border-border/70 bg-white p-6 shadow-soft transition-shadow hover:shadow-soft-lg">
       <div className="mb-3 flex gap-0.5 text-amber-400">
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} className="h-4 w-4 fill-current" />

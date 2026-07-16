@@ -13,6 +13,9 @@ import { DealsPage } from "./pages/deals/DealsPage"
 import { DealDetailsPage } from "./pages/deals/DealDetailsPage"
 import { CreateDealPage } from "./pages/deals/CreateDealPage"
 import { PaymentsPage } from "./pages/payments/PaymentsPage"
+import { DisputesPage } from "./pages/disputes/DisputesPage"
+import { WalletPage } from "./pages/wallet/WalletPage"
+import { HelpPage } from "./pages/help/HelpPage"
 import { TermsPage } from "./pages/legal/TermsPage"
 import { PrivacyPage } from "./pages/legal/PrivacyPage"
 import { PlatformTermsPage } from "./pages/legal/PlatformTermsPage"
@@ -280,6 +283,9 @@ function App() {
         <Route path="/deals/new" element={<CreateDealPage />} />
         <Route path="/deals/:id" element={<DealDetailsPage />} />
         <Route path="/payments" element={<PaymentsPage />} />
+        <Route path="/disputes" element={<DisputesPage />} />
+        <Route path="/wallet" element={<WalletPage />} />
+        <Route path="/help" element={<HelpPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/platform-terms" element={<PlatformTermsPage />} />

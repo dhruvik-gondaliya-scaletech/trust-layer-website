@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
+import { NavLink, Link } from "react-router-dom"
+
 const NAV_LINKS = [
-  { name: "Deals", href: "#deals" },
-  { name: "Payments", href: "#payments" },
-  { name: "Disputes", href: "#disputes" },
-  { name: "Wallet", href: "#wallet" },
-  { name: "Help", href: "#help" },
+  { name: "Deals", href: "/deals" },
+  { name: "Payments", href: "/payments" },
+  { name: "Disputes", href: "/disputes" },
+  { name: "Wallet", href: "/wallet" },
+  { name: "Help", href: "/help" },
 ]
 
 export function Header() {
@@ -34,35 +36,45 @@ export function Header() {
               </SheetHeader>
               <nav className="mt-8 flex flex-col gap-4">
                 {NAV_LINKS.map((link) => (
-                  <a
+                  <NavLink
                     key={link.name}
-                    href={link.href}
+                    to={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="block text-lg font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    className={({ isActive }) =>
+                      `block text-lg font-medium transition-colors ${
+                        isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                      }`
+                    }
                   >
                     {link.name}
-                  </a>
+                  </NavLink>
                 ))}
               </nav>
             </SheetContent>
           </Sheet>
 
           {/* Logo */}
-          <a href="#" className="flex items-center gap-2">
+          <Link to="/dashboard" className="flex items-center gap-2">
             <span className="text-xl font-bold tracking-tight text-primary">TrustLayer</span>
-          </a>
+          </Link>
         </div>
 
         {/* Center/Main Navigation (Tablet + Desktop) */}
         <nav className="hidden md:flex md:items-center md:gap-4 lg:gap-8">
           {NAV_LINKS.map((link) => (
-            <a
+            <NavLink
               key={link.name}
-              href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              to={link.href}
+              className={({ isActive }) => 
+                `text-sm font-medium transition-colors hover:text-primary relative py-1 ${
+                  isActive 
+                    ? "text-primary font-semibold after:absolute after:-bottom-[24px] after:left-0 after:h-[2px] after:w-full after:bg-primary" 
+                    : "text-muted-foreground"
+                }`
+              }
             >
               {link.name}
-            </a>
+            </NavLink>
           ))}
         </nav>
 

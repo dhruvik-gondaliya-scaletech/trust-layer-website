@@ -16,7 +16,7 @@ const SCRIPT: Msg[] = [
   { kind: "them", text: "Honestly a little nervous sending $420 to someone I don't know 😅" },
   { kind: "me", text: "Same here tbh. Let's just use TrustLayer 👇" },
   { kind: "deal" },
-  { kind: "system", text: "Buyer paid $420 — funds secured in escrow 🔒" },
+  { kind: "system", text: "Buyer paid $420 — funds secured in the vault 🔒" },
   { kind: "me", text: "Perfect, shipping it out today 🚚" },
   { kind: "system", text: "Delivered · Buyer confirmed the item ✅" },
   { kind: "system", text: "$420 released to seller 🎉" },
@@ -77,7 +77,7 @@ export function InActionSection() {
 
         {/* Phone chat mockup */}
         <div ref={ref} className="flex justify-center">
-          <div className="relative w-full max-w-[360px] rounded-[36px] border-[8px] border-foreground/90 bg-foreground/90 shadow-2xl">
+          <div className="relative w-full max-w-[360px] rounded-[36px] border-[8px] border-foreground/90 bg-foreground/90 shadow-soft-lg">
             <div className="overflow-hidden rounded-[28px] bg-[#e9edf2]">
               {/* chat header */}
               <div className="flex items-center gap-3 bg-white px-4 py-3 shadow-sm">
@@ -127,7 +127,7 @@ function Bubble({ msg, reduce }: { msg: Msg; reduce: boolean }) {
   if (msg.kind === "deal") {
     return (
       <motion.div {...anim} transition={{ duration: 0.35 }} className="flex justify-center">
-        <div className="w-[85%] rounded-2xl border border-primary/20 bg-white p-3 shadow-md">
+        <div className="w-[85%] rounded-2xl border border-primary/20 bg-white p-3 shadow-soft-lg">
           <div className="mb-2 flex items-center gap-2">
             <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary text-white">
               <ShieldCheck className="h-4 w-4" />

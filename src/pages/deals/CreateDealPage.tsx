@@ -13,14 +13,14 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { CameraCaptureModal } from "@/features/deals/components/CameraCaptureModal"
+import { VideoVerificationModal } from "@/features/deals/components/VideoVerificationModal"
+import { CertificationModal } from "@/features/deals/components/CertificationModal"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import {
   Camera,
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
-  Package,
-  Truck,
   Image as ImageIcon,
   Video,
   FileBadge,
@@ -29,12 +29,25 @@ import {
   ChevronDown,
   Plus,
   Trash2,
+  Play,
+  Trophy,
   type LucideIcon,
 } from "lucide-react"
 
 /* -------------------------------------------------------------------------- */
 /*  Types & Constants                                                         */
 /* -------------------------------------------------------------------------- */
+
+const CONFETTI = Array.from({ length: 48 }, (_, i) => {
+  const angle = (i / 48) * Math.PI * 2
+  return {
+    id: i,
+    x: Math.cos(angle) * (150 + (i % 4) * 50),
+    y: Math.sin(angle) * (150 + (i % 3) * 50),
+    color: ["#2563eb", "#22c55e", "#a855f7", "#f59e0b", "#ef4444"][i % 5],
+    delay: (i % 5) * 0.05,
+  }
+})
 
 type Step = 1 | 2 | 3 | 4 | 5 | 6
 
@@ -57,6 +70,7 @@ type DealState = {
   // Shipping
   shippingMethod: string
   shipsIn: string
+  shippingCost: string
   
   // Fees
   feeSplit: "split" | "buyer" | "seller"
@@ -84,24 +98,24 @@ export function CreateDealPage() {
     certification: false,
     shippingMethod: "standard",
     shipsIn: "2",
+    shippingCost: "",
     feeSplit: "split"
   })
 
   // A single shared camera drives every capture step. `job` records what it's
   // capturing for so the guidance copy and the accept behaviour adapt.
   const [cameraJob, setCameraJob] = useState<{ target: "main" | "additional"; replace?: boolean } | null>(null)
+  const [videoModalOpen, setVideoModalOpen] = useState(false)
+  const [certModalOpen, setCertModalOpen] = useState(false)
+  const [maxTrustSeen, setMaxTrustSeen] = useState(false)
+  const [maxTrustModalOpen, setMaxTrustModalOpen] = useState(false)
 
   // Calculations
   const priceNum = parseFloat(deal.price) || 0
   const feePercent = 0.03
   let feeAmount = priceNum * feePercent
-  let earnings = priceNum
-  
-  if (deal.feeSplit === "seller") {
-    earnings = priceNum - feeAmount
-  } else if (deal.feeSplit === "split") {
+  if (deal.feeSplit === "split") {
     feeAmount = feeAmount / 2
-    earnings = priceNum - feeAmount
   }
 
   // Trust Score — single source of truth, mirroring the approved mobile buckets.
@@ -114,6 +128,16 @@ export function CreateDealPage() {
   const videoScore = deal.video ? 30 : 0
   const certScore = deal.certification ? 20 : 0
   const trustScore = itemScore + mainScore + addlScore + videoScore + certScore
+
+  useEffect(() => {
+    if (trustScore === 100 && !maxTrustSeen) {
+      const t = setTimeout(() => {
+        setMaxTrustModalOpen(true)
+        setMaxTrustSeen(true)
+      }, 800) // allow the score card animation to partially finish
+      return () => clearTimeout(t)
+    }
+  }, [trustScore, maxTrustSeen])
 
   const breakdown: Bucket[] = [
     { label: "Item Details", value: itemScore, max: 20 },
@@ -131,7 +155,7 @@ export function CreateDealPage() {
   else if (!deal.certification) nextAction = "Upload Certificate"
 
   const status: TrustStatus =
-    trustScore >= 90 ? "EXCELLENT" : trustScore >= 70 ? "HIGH" : trustScore >= 40 ? "MEDIUM" : "LOW"
+    trustScore === 100 ? "MAXIMUM TRUST" : trustScore >= 90 ? "EXCELLENT" : trustScore >= 70 ? "HIGH" : trustScore >= 40 ? "MEDIUM" : "LOW"
 
   /* -------------------------------------------------------------------------- */
   /*  Handlers                                                                  */
@@ -297,6 +321,9 @@ export function CreateDealPage() {
               updateDeal={updateDeal}
               openMainCamera={openMainCamera}
               openAdditionalCamera={openAdditionalCamera}
+              openVideoModal={() => setVideoModalOpen(true)}
+              openCertModal={() => setCertModalOpen(true)}
+              trustScore={trustScore}
             />
           </motion.div>
         )
@@ -311,71 +338,41 @@ export function CreateDealPage() {
             className="space-y-8"
           >
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Shipping & Handover</h2>
-              <p className="text-muted-foreground mt-1">How will the buyer receive this item?</p>
+              <h2 className="text-2xl font-semibold tracking-tight">Shipping</h2>
             </div>
 
             <div className="space-y-6">
               <div className="space-y-3">
-                <Label>Delivery Method</Label>
-                <RadioGroup 
-                  value={deal.shippingMethod} 
-                  onValueChange={v => updateDeal({ shippingMethod: v })}
-                  className="grid grid-cols-2 gap-4"
-                >
-                  <Label 
-                    htmlFor="ship-standard" 
-                    className={cn(
-                      "flex flex-col items-center justify-center gap-3 rounded-xl border-2 p-5 cursor-pointer transition-all hover:bg-slate-50",
-                      deal.shippingMethod === "standard" ? "border-primary bg-primary/5" : "border-slate-100"
-                    )}
-                  >
-                    <RadioGroupItem value="standard" id="ship-standard" className="sr-only" />
-                    <Truck className={cn("h-8 w-8", deal.shippingMethod === "standard" ? "text-primary" : "text-slate-400")} />
-                    <span className="font-semibold text-slate-900">Ship via Carrier</span>
-                  </Label>
-                  
-                  <Label 
-                    htmlFor="ship-local" 
-                    className={cn(
-                      "flex flex-col items-center justify-center gap-3 rounded-xl border-2 p-5 cursor-pointer transition-all hover:bg-slate-50",
-                      deal.shippingMethod === "local" ? "border-primary bg-primary/5" : "border-slate-100"
-                    )}
-                  >
-                    <RadioGroupItem value="local" id="ship-local" className="sr-only" />
-                    <Package className={cn("h-8 w-8", deal.shippingMethod === "local" ? "text-primary" : "text-slate-400")} />
-                    <span className="font-semibold text-slate-900">Local Pickup</span>
-                  </Label>
-                </RadioGroup>
+                <Label>Handling Time</Label>
+                <Select value={deal.shipsIn} onValueChange={v => updateDeal({ shipsIn: v })}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Same day or 1 business day</SelectItem>
+                    <SelectItem value="2">2-3 business days</SelectItem>
+                    <SelectItem value="5">Within 5 business days</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-amber-600 flex items-start gap-2 mt-2">
+                  <span className="font-bold shrink-0">⚠</span> 
+                  If you do not ship within the selected handling time, the transaction may be automatically cancelled.
+                </p>
               </div>
 
-              {deal.shippingMethod === "standard" && (
-                <div className="space-y-3">
-                  <Label>Handling Time</Label>
-                  <Select value={deal.shipsIn} onValueChange={v => updateDeal({ shipsIn: v })}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Same day or 1 business day</SelectItem>
-                      <SelectItem value="2">2-3 business days</SelectItem>
-                      <SelectItem value="5">Within 5 business days</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {/* Estimated Delivery Card */}
-              <div className="mt-8 bg-slate-50 rounded-xl p-5 border border-slate-100">
-                <h4 className="font-semibold mb-4 text-slate-900">Buyer sees:</h4>
-                <div className="flex items-start gap-4">
-                  <div className="mt-0.5 h-8 w-8 rounded-full bg-white border flex items-center justify-center shadow-sm shrink-0">
-                    <Truck className="h-4 w-4 text-slate-500" />
+              <div className="space-y-3">
+                <Label>Shipping Cost (USD)</Label>
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                    <span className="text-slate-500 font-medium">$</span>
                   </div>
-                  <div>
-                    <p className="font-medium text-sm text-slate-900">Estimated Delivery: Aug 12 - 15</p>
-                    <p className="text-xs text-muted-foreground mt-1">Ships in {deal.shipsIn} business days via Standard Carrier. Tracking will be uploaded to TrustLayer.</p>
-                  </div>
+                  <Input 
+                    type="number" 
+                    placeholder="0.00" 
+                    className="pl-8 h-12"
+                    value={deal.shippingCost}
+                    onChange={e => updateDeal({ shippingCost: e.target.value })}
+                  />
                 </div>
               </div>
             </div>
@@ -429,6 +426,48 @@ export function CreateDealPage() {
                 </Label>
               ))}
             </RadioGroup>
+
+            {/* Estimated Earnings Card */}
+            <div className="mt-8 rounded-2xl border border-slate-200/60 bg-white overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+              <div className="p-5 flex items-center justify-between border-b border-slate-100 bg-white cursor-pointer hover:bg-slate-50 transition-colors">
+                <div>
+                  <h3 className="font-semibold text-slate-900">Estimated Earnings</h3>
+                  <p className="text-[13px] text-muted-foreground mt-0.5">Tap for breakdown</p>
+                </div>
+                <ChevronDown className="h-5 w-5 text-slate-400" />
+              </div>
+              
+              <div className="p-5 space-y-4 bg-slate-50/50">
+                <div className="flex items-center justify-between text-[15px]">
+                  <span className="text-slate-600 font-medium">Item Price</span>
+                  <span className="font-semibold text-slate-900">${priceNum.toFixed(2)}</span>
+                </div>
+                
+                <div className="flex justify-between text-[15px]">
+                  <div className="flex flex-col">
+                    <span className="text-slate-600 font-medium">Platform Fee</span>
+                    <span className="text-[13px] text-muted-foreground mt-0.5">Non-refundable</span>
+                  </div>
+                  <span className="font-medium text-slate-500">
+                    -${(priceNum * (deal.feeSplit === "split" ? 0.015 : deal.feeSplit === "seller" ? 0.03 : 0)).toFixed(2)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between text-[15px] pb-5 border-b border-slate-200/60">
+                  <span className="text-slate-600 font-medium">Buyer Pays</span>
+                  <span className="font-semibold text-slate-900">
+                    ${(priceNum + (priceNum * (deal.feeSplit === "split" ? 0.015 : deal.feeSplit === "buyer" ? 0.03 : 0))).toFixed(2)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-between pt-1">
+                  <span className="font-semibold text-slate-900">Seller Receives</span>
+                  <span className="font-bold text-[#2F5EFF] text-lg">
+                    ${(priceNum - (priceNum * (deal.feeSplit === "split" ? 0.015 : deal.feeSplit === "seller" ? 0.03 : 0))).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )
 
@@ -439,45 +478,184 @@ export function CreateDealPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="space-y-8"
+            className="space-y-6"
           >
-            <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Review & Publish</h2>
-              <p className="text-muted-foreground mt-1">Double check your deal details before generating the secure link.</p>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-semibold tracking-tight">Review & Publish</h2>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => setStep(1)} className="rounded-full px-5">
+                Edit Deal
+              </Button>
             </div>
 
-            <div className="rounded-xl border bg-white overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-slate-100">
-                <div className="flex items-start gap-5">
-                  <div className="h-20 w-20 bg-slate-100 rounded-lg shrink-0 border flex items-center justify-center">
-                    {deal.mainPhoto ? <ImageIcon className="h-8 w-8 text-slate-400" /> : <Package className="h-8 w-8 text-slate-300" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-lg text-slate-900 truncate">{deal.title || "Untitled Deal"}</h3>
-                    <p className="text-muted-foreground mt-1 truncate">{deal.productType ? deal.productType.toUpperCase() : "NO PRODUCT TYPE"} · {deal.condition ? deal.condition.toUpperCase() : "NO CONDITION"}</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {deal.isGraded && <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50">Authenticated</Badge>}
-                      {deal.orderType === "online" && <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50">Online Transaction</Badge>}
+            <div className="rounded-2xl border bg-white overflow-hidden shadow-[0_2px_15px_rgba(0,0,0,0.03)]">
+              {/* Product Media */}
+              <div className="p-6 pb-0 space-y-6">
+                <div className="h-[300px] w-full bg-slate-100 rounded-2xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
+                  {deal.mainPhoto ? (
+                    <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=800&auto=format&fit=crop" alt="Main Photo" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-slate-400">
+                      <ImageIcon className="h-10 w-10 mb-2 opacity-50" />
+                      <span className="text-sm font-medium">No main photo</span>
                     </div>
+                  )}
+                </div>
+
+                <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
+                  {/* Additional Photos */}
+                  {Array.from({ length: Math.max(1, deal.additionalPhotos) }).map((_, i) => (
+                    <div key={`photo-${i}`} className="h-24 w-24 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
+                      {deal.additionalPhotos > i ? (
+                        <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=200&auto=format&fit=crop" alt={`Additional Photo ${i + 1}`} className="h-full w-full object-cover opacity-90" />
+                      ) : (
+                        <ImageIcon className="h-7 w-7 text-slate-300" />
+                      )}
+                    </div>
+                  ))}
+                  
+                  {/* Video */}
+                  <div className="h-24 w-24 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
+                    {deal.video ? (
+                      <div className="h-full w-full flex items-center justify-center bg-[#2F5EFF]/5 text-[#2F5EFF]">
+                        <Play className="h-8 w-8 ml-1" />
+                      </div>
+                    ) : (
+                      <Play className="h-7 w-7 text-slate-300 ml-0.5" />
+                    )}
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold tracking-tight">${priceNum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                  
+                  {/* Certification */}
+                  <div className="h-24 w-24 shrink-0 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-center overflow-hidden relative">
+                    {deal.certification ? (
+                      <div className="h-full w-full flex items-center justify-center bg-emerald-50/50 text-emerald-600">
+                        <FileBadge className="h-8 w-8" />
+                      </div>
+                    ) : (
+                      <FileBadge className="h-7 w-7 text-slate-300" />
+                    )}
                   </div>
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50/50 space-y-4">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500">Shipping</span>
-                  <span className="font-medium text-slate-900">{deal.shippingMethod === "local" ? "Local Pickup" : `Ships in ${deal.shipsIn} days`}</span>
+              {/* Title & Price */}
+              <div className="px-6 pb-6 pt-2 border-b border-slate-100">
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <h3 className="text-3xl font-bold tracking-tight text-slate-900">{deal.title || "Untitled Deal"}</h3>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {deal.isGraded && <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 text-xs py-1 px-3">Authenticated</Badge>}
+                      {deal.orderType === "online" && <Badge variant="secondary" className="bg-blue-50 text-blue-700 hover:bg-blue-50 text-xs py-1 px-3">Online Transaction</Badge>}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-3xl font-bold tracking-tight text-[#2F5EFF]">
+                      ${priceNum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-slate-500">Platform Fee ({deal.feeSplit === "split" ? "1.5%" : deal.feeSplit === "buyer" ? "0%" : "3%"})</span>
-                  <span className="font-medium text-red-600">-${feeAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-                </div>
-                <div className="pt-4 border-t border-slate-200 flex justify-between items-center">
-                  <span className="font-medium text-slate-900">You will earn</span>
-                  <span className="text-lg font-bold text-emerald-600">${earnings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+
+              {/* Item Details */}
+              <div className="p-6 border-b border-slate-100">
+                <h4 className="text-lg font-bold text-slate-900 mb-5">Item Details</h4>
+                <dl className="space-y-4 text-[15px]">
+                  <div className="grid grid-cols-3 gap-4">
+                    <dt className="text-slate-500 font-medium">Condition</dt>
+                    <dd className="col-span-2 font-medium text-slate-900">{deal.condition ? deal.condition.charAt(0).toUpperCase() + deal.condition.slice(1) : "—"}</dd>
+                  </div>
+                  {deal.isGraded && (
+                    <>
+                      <div className="grid grid-cols-3 gap-4">
+                        <dt className="text-slate-500 font-medium">Grade</dt>
+                        <dd className="col-span-2 font-medium text-slate-900">Authenticated / Graded</dd>
+                      </div>
+                      {deal.serialNumber && (
+                        <div className="grid grid-cols-3 gap-4">
+                          <dt className="text-slate-500 font-medium">Serial</dt>
+                          <dd className="col-span-2 font-medium text-slate-900">{deal.serialNumber}</dd>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  <div className="grid grid-cols-3 gap-4">
+                    <dt className="text-slate-500 font-medium">Description</dt>
+                    <dd className="col-span-2 text-slate-700 leading-relaxed whitespace-pre-wrap">{deal.description || "—"}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              {/* Transaction */}
+              <div className="p-6 bg-slate-50/30">
+                <h4 className="text-lg font-bold text-slate-900 mb-5">Transaction</h4>
+                
+                <dl className="space-y-4 text-[15px] mb-8">
+                  <div className="grid grid-cols-3 gap-4">
+                    <dt className="text-slate-500 font-medium">Delivery Method</dt>
+                    <dd className="col-span-2 font-medium text-slate-900">
+                      {deal.shippingMethod === "local" ? "Local Pickup" : "Ship via Carrier"}
+                    </dd>
+                  </div>
+                  {deal.shippingMethod !== "local" && (
+                    <>
+                      <div className="grid grid-cols-3 gap-4">
+                        <dt className="text-slate-500 font-medium">Handling Time</dt>
+                        <dd className="col-span-2 font-medium text-slate-900">{deal.shipsIn} business days</dd>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        <dt className="text-slate-500 font-medium">Shipping Cost</dt>
+                        <dd className="col-span-2 font-medium text-slate-900">
+                          {parseFloat(deal.shippingCost) > 0 ? `$${parseFloat(deal.shippingCost).toFixed(2)}` : "Free"}
+                        </dd>
+                      </div>
+                    </>
+                  )}
+                  <div className="grid grid-cols-3 gap-4">
+                    <dt className="text-slate-500 font-medium">Platform Fee</dt>
+                    <dd className="col-span-2 font-medium text-slate-900">
+                      {deal.feeSplit === "buyer" ? "Buyer Pays" : deal.feeSplit === "split" ? "Split 50/50" : "Seller Pays"}
+                    </dd>
+                  </div>
+                </dl>
+
+                <div className="rounded-xl border border-slate-200/60 bg-white overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+                  <div className="p-4 flex items-center justify-between border-b border-slate-100">
+                    <div>
+                      <h4 className="font-semibold text-slate-900">Estimated Earnings</h4>
+                    </div>
+                  </div>
+                  
+                  <div className="p-5 space-y-4 bg-slate-50/50 text-[15px]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600 font-medium">Item Price</span>
+                      <span className="font-semibold text-slate-900">${priceNum.toFixed(2)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-slate-600 font-medium">Platform Fee</span>
+                        <span className="text-[13px] text-muted-foreground mt-0.5">Non-refundable</span>
+                      </div>
+                      <span className="font-medium text-slate-500">
+                        -${(priceNum * (deal.feeSplit === "split" ? 0.015 : deal.feeSplit === "seller" ? 0.03 : 0)).toFixed(2)}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pb-5 border-b border-slate-200/60">
+                      <span className="text-slate-600 font-medium">Buyer Pays</span>
+                      <span className="font-semibold text-slate-900">
+                        ${(priceNum + (parseFloat(deal.shippingCost) || 0) + (priceNum * (deal.feeSplit === "split" ? 0.015 : deal.feeSplit === "buyer" ? 0.03 : 0))).toFixed(2)}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="font-semibold text-slate-900">Seller Receives</span>
+                      <span className="font-bold text-[#2F5EFF] text-lg">
+                        ${(priceNum + (parseFloat(deal.shippingCost) || 0) - (priceNum * (deal.feeSplit === "split" ? 0.015 : deal.feeSplit === "seller" ? 0.03 : 0))).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -573,10 +751,27 @@ export function CreateDealPage() {
                 nextAction={nextAction}
                 breakdown={breakdown}
               />
+              <BuildBuyerTrustCard deal={deal} trustScore={trustScore} className="hidden lg:block mt-6" />
             </div>
           )}
         </div>
       </div>
+
+      <VideoVerificationModal
+        open={videoModalOpen}
+        onClose={() => setVideoModalOpen(false)}
+        onCapture={() => updateDeal({ video: true })}
+      />
+      <CertificationModal
+        open={certModalOpen}
+        onClose={() => setCertModalOpen(false)}
+        onCapture={() => updateDeal({ certification: true })}
+      />
+      
+      <MaximumTrustModal 
+        open={maxTrustModalOpen} 
+        onOpenChange={setMaxTrustModalOpen}
+      />
 
       {/* Shared TrustLayer camera guidance modal */}
       <CameraCaptureModal
@@ -619,7 +814,7 @@ export function CreateDealPage() {
 /*  Trust Score — shared card (mirrors the approved mobile card)              */
 /* -------------------------------------------------------------------------- */
 
-type TrustStatus = "LOW" | "MEDIUM" | "HIGH" | "EXCELLENT"
+type TrustStatus = "LOW" | "MEDIUM" | "HIGH" | "EXCELLENT" | "MAXIMUM TRUST"
 type Bucket = { label: string; value: number; max: number }
 
 /* Smooth count-up that respects reduced motion. */
@@ -666,9 +861,15 @@ function TrustScoreCard({
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-lg font-semibold">Trust Score</h3>
-            <span className="mt-2 inline-flex rounded-md bg-white/15 px-2 py-0.5 text-[11px] font-bold tracking-wide">
-              {status}
-            </span>
+            {status === "MAXIMUM TRUST" ? (
+              <span className="mt-2 inline-flex items-center gap-1 rounded-md bg-amber-400/20 px-2 py-0.5 text-[11px] font-bold tracking-wide text-amber-300 border border-amber-400/30 shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                <Trophy className="h-3 w-3" /> MAXIMUM TRUST
+              </span>
+            ) : (
+              <span className="mt-2 inline-flex rounded-md bg-white/15 px-2 py-0.5 text-[11px] font-bold tracking-wide">
+                {status}
+              </span>
+            )}
           </div>
           <div className="flex items-baseline">
             <span className="text-4xl font-bold tracking-tight">{display}</span>
@@ -793,37 +994,190 @@ function AccordionItem({
   )
 }
 
-function SuccessRow({ label, onUndo }: { label: string; onUndo: () => void }) {
+function MaximumTrustModal({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+  const reduce = useReducedMotion()
+  
+  if (!open) return null
+  
   return (
-    <div className="mt-3 flex items-center justify-between rounded-xl bg-emerald-50 px-4 py-3">
-      <span className="flex items-center gap-2 text-sm font-medium text-emerald-700">
-        <CheckCircle2 className="h-4 w-4" /> {label}
-      </span>
-      <button onClick={onUndo} className="text-xs font-semibold text-slate-500 hover:text-slate-700">
-        Undo
-      </button>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <motion.div 
+        initial={{ opacity: 0 }} 
+        animate={{ opacity: 1 }} 
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-[2px]" 
+      />
+      
+      {/* Confetti (only plays on open, fades out after 3s) */}
+      <AnimatePresence>
+        {!reduce && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 1, delay: 2.5 }}
+            className="pointer-events-none absolute left-1/2 top-1/2 z-[101]"
+          >
+            {CONFETTI.map((c) => (
+              <motion.span
+                key={c.id}
+                initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+                animate={{ x: c.x, y: c.y, opacity: 0, scale: 0.4 }}
+                transition={{ duration: 2, ease: "easeOut", delay: c.delay }}
+                className="absolute h-2.5 w-2.5 rounded-[2px]"
+                style={{ backgroundColor: c.color }}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal Card */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="relative z-[102] w-full max-w-sm overflow-hidden rounded-[24px] bg-white p-8 text-center shadow-2xl ring-1 ring-slate-100"
+      >
+        {/* Animated Trophy */}
+        <div className="relative mx-auto mb-6 flex h-24 w-24 items-center justify-center">
+          <motion.div 
+            initial={{ scale: 0 }} 
+            animate={{ scale: [0, 1.2, 1] }} 
+            transition={{ duration: 0.6, type: "spring", bounce: 0.5 }}
+            className="absolute inset-0 rounded-full bg-amber-400/20 blur-xl"
+          />
+          <motion.div
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1, y: [0, -6, 0] }}
+            transition={{ 
+              scale: { duration: 0.5, ease: "backOut" },
+              y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" } 
+            }}
+            className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-tr from-amber-400 to-amber-200 shadow-lg ring-4 ring-amber-50"
+          >
+            <Trophy className="h-10 w-10 text-white" />
+          </motion.div>
+        </div>
+
+        <h2 className="mb-2 text-[22px] font-bold tracking-tight text-slate-900">
+          🎉 Maximum Trust Achieved
+        </h2>
+        <p className="mb-8 text-sm text-slate-500 font-medium px-2">
+          Your listing is now fully verified and ready to inspire buyer confidence.
+        </p>
+
+        {/* Breakdown box */}
+        <div className="mb-8 rounded-2xl bg-slate-50 p-5 text-left border border-slate-100">
+          <div className="mb-4 flex items-center justify-between border-b border-slate-200/60 pb-4">
+            <span className="font-bold text-slate-700 text-sm">Trust Score</span>
+            <span className="font-bold text-[#2F5EFF]">100 / 100</span>
+          </div>
+          <div className="space-y-3 text-[13px]">
+            <div className="flex items-center justify-between font-medium text-slate-600">
+              <span className="flex items-center gap-2.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Main Photo
+              </span>
+            </div>
+            <div className="flex items-center justify-between font-medium text-slate-600">
+              <span className="flex items-center gap-2.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Additional Photos
+              </span>
+            </div>
+            <div className="flex items-center justify-between font-medium text-slate-600">
+              <span className="flex items-center gap-2.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Product Video
+              </span>
+            </div>
+            <div className="flex items-center justify-between font-medium text-slate-600">
+              <span className="flex items-center gap-2.5">
+                <CheckCircle2 className="h-4 w-4 text-emerald-500" /> Certification
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <Button onClick={() => onOpenChange(false)} className="h-12 w-full rounded-xl bg-[#2F5EFF] hover:bg-[#2F5EFF]/90 text-base font-semibold shadow-sm">
+          Continue to Deal Review
+        </Button>
+      </motion.div>
     </div>
   )
 }
+
+function BuildBuyerTrustCard({ deal, trustScore, className }: { deal: DealState, trustScore: number, className?: string }) {
+  return (
+    <div className={cn("rounded-3xl border border-[#2F5EFF]/20 bg-[#2F5EFF]/[0.02] p-6 shadow-sm", className)}>
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-bold text-[#1E3A8A]">Build Buyer Trust</h3>
+        <p className="mt-1 text-sm text-[#2F5EFF]/80 font-medium">Complete the remaining verification steps to maximize buyer confidence.</p>
+      </div>
+      
+      <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-200/60">
+        <span className="text-sm font-bold text-slate-700">Current Progress</span>
+        <div className="flex items-baseline gap-1">
+          <span className="text-base font-bold text-[#2F5EFF]">{useCountUp(trustScore)}</span>
+          <span className="text-sm font-semibold text-slate-400">/ 100</span>
+        </div>
+      </div>
+      
+      <div className="space-y-3">
+        <div className="flex items-center text-sm">
+          <span className={cn("flex items-center gap-3 w-full", deal.mainPhoto ? "text-emerald-600 font-medium" : "text-slate-400 font-medium")}>
+            {deal.mainPhoto ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <span className="h-4 w-4 shrink-0 flex items-center justify-center text-xs font-bold">✕</span>}
+            {deal.mainPhoto ? "Main Photo Complete" : "Main Photo Required"}
+          </span>
+        </div>
+        <div className="flex items-center text-sm">
+          <span className={cn("flex items-center gap-3 w-full", deal.additionalPhotos === 4 ? "text-emerald-600 font-medium" : "text-slate-400 font-medium")}>
+            {deal.additionalPhotos === 4 ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <span className="h-4 w-4 shrink-0 flex items-center justify-center text-xs font-bold">✕</span>}
+            {deal.additionalPhotos === 4 ? "Additional Photos Complete" : "Upload Additional Photos"}
+          </span>
+        </div>
+        <div className="flex items-center text-sm">
+          <span className={cn("flex items-center gap-3 w-full", deal.video ? "text-emerald-600 font-medium" : "text-slate-400 font-medium")}>
+            {deal.video ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <span className="h-4 w-4 shrink-0 flex items-center justify-center text-xs font-bold">✕</span>}
+            {deal.video ? "Product Video Complete" : "Record Product Video"}
+          </span>
+        </div>
+        <div className="flex items-center text-sm">
+          <span className={cn("flex items-center gap-3 w-full", deal.certification ? "text-emerald-600 font-medium" : "text-slate-400 font-medium")}>
+            {deal.certification ? <CheckCircle2 className="h-4 w-4 shrink-0" /> : <span className="h-4 w-4 shrink-0 flex items-center justify-center text-xs font-bold">✕</span>}
+            {deal.certification ? "Certification Verified" : "Upload Certification"}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 
 function Step2Verification({
   deal,
   updateDeal,
   openMainCamera,
   openAdditionalCamera,
+  openVideoModal,
+  openCertModal,
+  trustScore,
 }: {
   deal: DealState
   updateDeal: (u: Partial<DealState>) => void
   openMainCamera: () => void
   openAdditionalCamera: (replace?: boolean) => void
+  openVideoModal: () => void
+  openCertModal: () => void
+  trustScore: number
 }) {
   const [open, setOpen] = useState<string | null>("main")
-  const [photoSheet, setPhotoSheet] = useState(false)
+  const [sheetTarget, setSheetTarget] = useState<"main" | "additional" | "video" | "cert" | null>(null)
   const toggle = (k: string) => setOpen((o) => (o === k ? null : k))
   const ctaClass = "mt-3 w-full h-12 rounded-xl bg-[#2F5EFF] hover:bg-[#2F5EFF]/90 text-base font-semibold"
 
-  const replacePhoto = () => openAdditionalCamera(true)
-  const deletePhoto = () => updateDeal({ additionalPhotos: Math.max(0, deal.additionalPhotos - 1) })
+  const replaceAdditionalPhoto = () => openAdditionalCamera(true)
+  const deleteAdditionalPhoto = () => updateDeal({ additionalPhotos: Math.max(0, deal.additionalPhotos - 1) })
+  
+  const replaceMainPhoto = () => openMainCamera()
+  const deleteMainPhoto = () => updateDeal({ mainPhoto: false })
 
   // Auto-advance: when a step completes, collapse it and open the next one.
   const prevMain = useRef(deal.mainPhoto)
@@ -863,18 +1217,38 @@ function Step2Verification({
             The primary photo buyers see in search results. Make it count.
           </p>
           {deal.mainPhoto ? (
-            <div className="mt-3 flex items-center gap-3">
-              <div
-                className="group relative flex h-20 w-20 cursor-pointer items-center justify-center overflow-hidden rounded-lg border bg-slate-100"
-                onClick={openMainCamera}
-              >
-                <ImageIcon className="h-7 w-7 text-slate-300" />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                  <span className="text-xs font-semibold text-white">Retake</span>
+            <div className="mt-3 flex items-center gap-4">
+              <div className="group relative flex w-24 aspect-square items-center justify-center overflow-hidden rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600">
+                {/* Simulated Thumbnail */}
+                <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=200&auto=format&fit=crop" alt="Main Photo" className="absolute inset-0 h-full w-full object-cover" />
+                
+                {/* Desktop: hover overlay with Replace + Delete */}
+                <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex">
+                  <button
+                    onClick={replaceMainPhoto}
+                    aria-label="Replace photo"
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-700 transition-colors hover:bg-white"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={deleteMainPhoto}
+                    aria-label="Delete photo"
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-600 transition-colors hover:bg-white"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
+
+                {/* Touch: tap opens the Photo Options bottom sheet */}
+                <button
+                  onClick={() => setSheetTarget("main")}
+                  aria-label="Photo options"
+                  className="absolute inset-0 lg:hidden"
+                />
               </div>
               <span className="flex items-center gap-1 text-sm font-medium text-emerald-600">
-                <CheckCircle2 className="h-4 w-4" /> Photo added
+                <CheckCircle2 className="h-5 w-5" /> Main Photo added
               </span>
             </div>
           ) : (
@@ -914,14 +1288,14 @@ function Step2Verification({
                     {/* Desktop: hover overlay with Replace + Delete */}
                     <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex">
                       <button
-                        onClick={replacePhoto}
+                        onClick={replaceAdditionalPhoto}
                         aria-label="Replace photo"
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-700 transition-colors hover:bg-white"
                       >
                         <Camera className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={deletePhoto}
+                        onClick={deleteAdditionalPhoto}
                         aria-label="Delete photo"
                         className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-600 transition-colors hover:bg-white"
                       >
@@ -931,7 +1305,7 @@ function Step2Verification({
 
                     {/* Touch: tap opens the Photo Options bottom sheet */}
                     <button
-                      onClick={() => setPhotoSheet(true)}
+                      onClick={() => setSheetTarget("additional")}
                       aria-label="Photo options"
                       className="absolute inset-0 lg:hidden"
                     />
@@ -957,40 +1331,7 @@ function Step2Verification({
             })}
           </div>
 
-          {/* Mobile-first Photo Options bottom sheet */}
-          <Sheet open={photoSheet} onOpenChange={setPhotoSheet}>
-            <SheetContent side="bottom" className="rounded-t-3xl">
-              <SheetHeader>
-                <SheetTitle className="text-left">Photo Options</SheetTitle>
-              </SheetHeader>
-              <div className="mt-4 space-y-1">
-                <button
-                  onClick={() => {
-                    setPhotoSheet(false)
-                    replacePhoto()
-                  }}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-slate-800 transition-colors hover:bg-slate-50"
-                >
-                  <Camera className="h-5 w-5 text-slate-600" /> Replace Photo
-                </button>
-                <button
-                  onClick={() => {
-                    setPhotoSheet(false)
-                    deletePhoto()
-                  }}
-                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-red-600 transition-colors hover:bg-red-50"
-                >
-                  <Trash2 className="h-5 w-5" /> Delete Photo
-                </button>
-                <button
-                  onClick={() => setPhotoSheet(false)}
-                  className="w-full rounded-xl px-4 py-3 text-center font-medium text-slate-500 transition-colors hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-              </div>
-            </SheetContent>
-          </Sheet>
+          {/* Mobile-first Photo Options bottom sheet moved to universal level */}
         </AccordionItem>
 
         {/* 3. Product Video */}
@@ -1007,9 +1348,35 @@ function Step2Verification({
             A 360-degree video proves authenticity and physical possession.
           </p>
           {deal.video ? (
-            <SuccessRow label="Video recorded" onUndo={() => updateDeal({ video: false })} />
+            <div className="mt-3 flex items-center gap-4">
+              <div className="group relative flex w-24 aspect-square items-center justify-center overflow-hidden rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600">
+                {/* Simulated Video Thumbnail */}
+                <img src="https://images.unsplash.com/photo-1610321287682-140b9dcbc3b6?q=80&w=200&auto=format&fit=crop" alt="Product Video" className="absolute inset-0 h-full w-full object-cover opacity-80" />
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm">
+                    <Play className="h-4 w-4 ml-0.5" />
+                  </div>
+                </div>
+                
+                {/* Desktop: hover overlay with Replace + Delete */}
+                <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex">
+                  <button onClick={openVideoModal} aria-label="Replace video" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-700 transition-colors hover:bg-white">
+                    <Video className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => updateDeal({ video: false })} aria-label="Delete video" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-600 transition-colors hover:bg-white">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Touch: tap opens the Options bottom sheet */}
+                <button onClick={() => setSheetTarget("video")} aria-label="Video options" className="absolute inset-0 lg:hidden" />
+              </div>
+              <span className="flex items-center gap-1 text-sm font-medium text-emerald-600">
+                <CheckCircle2 className="h-5 w-5" /> Video recorded
+              </span>
+            </div>
           ) : (
-            <Button onClick={() => updateDeal({ video: true })} className={ctaClass}>
+            <Button onClick={openVideoModal} className={ctaClass}>
               Record Video
             </Button>
           )}
@@ -1029,14 +1396,80 @@ function Step2Verification({
             Upload PSA, receipts, or authenticity documents.
           </p>
           {deal.certification ? (
-            <SuccessRow label="Certificate uploaded" onUndo={() => updateDeal({ certification: false })} />
+            <div className="mt-3 flex items-center gap-4">
+              <div className="group relative flex w-24 aspect-square items-center justify-center overflow-hidden rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-600">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <FileBadge className="h-8 w-8 opacity-60" />
+                </div>
+                
+                {/* Desktop: hover overlay with Replace + Delete */}
+                <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/55 opacity-0 transition-opacity group-hover:opacity-100 lg:flex">
+                  <button onClick={openCertModal} aria-label="Replace certification" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-700 transition-colors hover:bg-white">
+                    <FileBadge className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => updateDeal({ certification: false })} aria-label="Delete certification" className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-red-600 transition-colors hover:bg-white">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Touch: tap opens the Options bottom sheet */}
+                <button onClick={() => setSheetTarget("cert")} aria-label="Certification options" className="absolute inset-0 lg:hidden" />
+              </div>
+              <span className="flex items-center gap-1 text-sm font-medium text-emerald-600">
+                <CheckCircle2 className="h-5 w-5" /> Certificate uploaded
+              </span>
+            </div>
           ) : (
-            <Button onClick={() => updateDeal({ certification: true })} className={ctaClass}>
+            <Button onClick={openCertModal} className={ctaClass}>
               Upload Certificate
             </Button>
           )}
         </AccordionItem>
       </div>
+
+      {/* Universal Mobile-first Options bottom sheet */}
+      <Sheet open={sheetTarget !== null} onOpenChange={(open) => !open && setSheetTarget(null)}>
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader>
+            <SheetTitle className="text-left">Options</SheetTitle>
+          </SheetHeader>
+          <div className="mt-4 space-y-1">
+            <button
+              onClick={() => {
+                if (sheetTarget === "main") replaceMainPhoto()
+                else if (sheetTarget === "additional") replaceAdditionalPhoto()
+                else if (sheetTarget === "video") openVideoModal()
+                else if (sheetTarget === "cert") openCertModal()
+                setSheetTarget(null)
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-slate-800 transition-colors hover:bg-slate-50"
+            >
+              <Camera className="h-5 w-5 text-slate-600" /> Replace
+            </button>
+            <button
+              onClick={() => {
+                if (sheetTarget === "main") deleteMainPhoto()
+                else if (sheetTarget === "additional") deleteAdditionalPhoto()
+                else if (sheetTarget === "video") updateDeal({ video: false })
+                else if (sheetTarget === "cert") updateDeal({ certification: false })
+                setSheetTarget(null)
+              }}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left font-medium text-red-600 transition-colors hover:bg-red-50"
+            >
+              <Trash2 className="h-5 w-5" /> Delete
+            </button>
+            <button
+              onClick={() => setSheetTarget(null)}
+              className="w-full rounded-xl px-4 py-3 text-center font-medium text-slate-500 transition-colors hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Build Buyer Trust Checklist (Mobile) */}
+      <BuildBuyerTrustCard deal={deal} trustScore={trustScore} className="mt-8 lg:hidden" />
     </>
   )
 }
