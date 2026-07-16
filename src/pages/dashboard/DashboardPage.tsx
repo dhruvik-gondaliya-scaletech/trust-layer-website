@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link } from "react-router-dom"
-import { motion, useReducedMotion, useSpring, useTransform, animate } from "framer-motion"
+import { motion, useReducedMotion, animate } from "framer-motion"
 import {
   ArrowRight,
   Handshake,
@@ -13,9 +13,7 @@ import {
   Wallet,
   ChartBar,
   Handbag,
-  Lightning,
-  CheckCircle,
-  WarningCircle
+  Lightning
 } from "@phosphor-icons/react"
 import { MainLayout } from "@/components/layout/MainLayout"
 import { cn } from "@/lib/utils"
@@ -24,8 +22,7 @@ import { cn } from "@/lib/utils"
 /*  Design tokens                                                             */
 /* -------------------------------------------------------------------------- */
 
-const BLUE = "#2F5EFF"
-const GREEN = "#059669"
+const BLUE = "#2563eb"
 const CARD = "rounded-[24px] bg-white shadow-[0_4px_12px_rgba(15,23,42,0.03),_0_18px_40px_rgba(15,23,42,0.08)] transition-transform duration-300 hover:-translate-y-1"
 const EASE = [0.16, 1, 0.3, 1] as const
 

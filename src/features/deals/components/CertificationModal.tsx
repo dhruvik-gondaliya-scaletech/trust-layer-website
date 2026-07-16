@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { FileBadge, CheckCircle2, ArrowLeft, Image as ImageIcon, Camera, Upload } from "lucide-react"
+import { FileBadge, CheckCircle2, ArrowLeft, Camera, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
