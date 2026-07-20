@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 const LINKS = [
   { href: "#how-it-works", label: "How it Works" },
   { href: "#demo", label: "Demo" },
-  { href: "#comparison", label: "Comparison" },
+  { href: "#comparison", label: "Why TrustLayer" },
   { href: "#testimonials", label: "Testimonials" },
   { href: "#faq", label: "FAQ" },
 ]
