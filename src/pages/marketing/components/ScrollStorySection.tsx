@@ -73,7 +73,7 @@ export function ScrollStorySection() {
   }
 
   return (
-    <section id="how-it-works" className="relative bg-gradient-to-b from-secondary/40 via-background to-background py-24 overflow-hidden">
+    <section id="how-it-works" className="relative bg-gradient-to-b from-secondary/40 via-background to-background py-12 md:py-16 lg:py-20 overflow-hidden">
       <div className="mx-auto max-w-[1200px] px-6">
         
         {/* Carousel Container */}
@@ -249,7 +249,7 @@ const LISTINGS: Listing[] = [
     Photo: PhotoSneaker,
   },
   {
-    title: "Acoustic Guitar — Dreadnought",
+    title: "Acoustic Guitar - Dreadnought",
     price: "$340",
     condition: "Used",
     seller: "@riff_master",
@@ -597,7 +597,7 @@ function SceneProtected() {
         $420 locked in the vault
       </div>
       <p className="text-center text-sm font-medium text-muted-foreground">
-        The seller can see it's funded — but can't touch it yet.
+        The seller can see it's funded but can't touch it yet.
       </p>
     </div>
   )

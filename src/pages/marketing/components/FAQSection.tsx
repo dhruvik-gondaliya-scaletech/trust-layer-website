@@ -20,7 +20,7 @@ const FAQS: Faq[] = [
   },
   {
     q: "What if something goes wrong?",
-    a: "If the item never arrives or isn't as described, the buyer can open a dispute. Our resolution team reviews evidence from both sides and mediates a fair outcome — money stays protected the whole time.",
+    a: "If the item never arrives or isn't as described, the buyer can open a dispute. Our resolution team reviews evidence from both sides and mediates a fair outcome - money stays protected the whole time.",
   },
   {
     q: "Is my money and identity safe?",
@@ -28,11 +28,11 @@ const FAQS: Faq[] = [
   },
   {
     q: "Can I use it outside of marketplaces?",
-    a: "Absolutely. TrustLayer works for any private deal — Instagram, Discord, WhatsApp, Craigslist, forums, or even in person. Just create a deal and share the secure link.",
+    a: "Absolutely. TrustLayer works for any private deal - Instagram, Discord, WhatsApp, Craigslist, forums, or even in person. Just create a deal and share the secure link.",
   },
   {
     q: "How much does TrustLayer cost?",
-    a: "Creating an account is free. A small, transparent protection fee applies per completed transaction — always shown up front before anyone pays. No hidden charges.",
+    a: "Creating an account is free. A small, transparent protection fee applies per completed transaction - always shown up front before anyone pays. No hidden charges.",
   },
 ]
 
@@ -49,12 +49,12 @@ export function FAQSection() {
   )
 
   return (
-    <section id="faq" className="bg-secondary/40 py-24">
+    <section id="faq" className="bg-secondary/40 py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-[760px] px-6">
         <SectionHeading
           eyebrow="Questions?"
           title="Everything you're wondering, answered."
-          className="mb-8"
+          className="mb-6 md:mb-8"
         />
 
         {/* search */}
@@ -88,7 +88,7 @@ export function FAQSection() {
             <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-white py-12 text-center">
               <MessageCircleQuestion className="h-8 w-8 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                No matches. Try another word — or just{" "}
+                No matches. Try another word - or just{" "}
                 <a href="#" className="font-semibold text-primary hover:underline">
                   ask our team
                 </a>

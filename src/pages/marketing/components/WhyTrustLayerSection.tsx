@@ -43,13 +43,13 @@ export function WhyTrustLayerSection() {
       <div className="mx-auto max-w-[1200px] px-6">
         <SectionHeading
           eyebrow="Why TrustLayer"
-          title="Everything a safe deal needs — in one layer."
+          title="Everything a safe deal needs - in one layer."
           subtitle="Protection for both sides, real security, and fraud detection working quietly in the background."
           className="mb-16"
         />
 
         <div className="grid auto-rows-[minmax(170px,auto)] grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {/* Hero cell — both sides protected */}
+          {/* Hero cell - both sides protected */}
           <TiltCard className="md:col-span-2 md:row-span-2" max={6}>
             <Cell className="flex h-full flex-col justify-between bg-gradient-to-br from-primary/[0.06] to-violet-500/[0.06]">
               <div>
@@ -74,7 +74,7 @@ export function WhyTrustLayerSection() {
 
           {/* Live demo teaser */}
           <Cell className="md:col-span-2 flex flex-col justify-between bg-primary text-white" delay={0.05}>
-            <a href="#demo" className="absolute inset-0" aria-label="Try the live payment protection demo" />
+            <a href="#demo" className="absolute inset-0" aria-label="Try the live Payment Vault demo" />
             <div className="flex items-start justify-between">
               <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">
                 <Play className="h-3 w-3 fill-current" /> Interactive
@@ -111,7 +111,7 @@ export function WhyTrustLayerSection() {
           <FeatureCell
             icon={<LockKeyhole className="h-6 w-6" />}
             title="Secure Vault"
-            desc="Funds held in a regulated trust account — never with the seller."
+            desc="Funds held in a regulated trust account - never with the seller."
             className="md:col-span-2"
             delay={0.2}
           />

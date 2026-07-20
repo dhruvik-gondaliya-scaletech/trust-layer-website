@@ -16,7 +16,7 @@ const SCRIPT: Msg[] = [
   { kind: "them", text: "Honestly a little nervous sending $420 to someone I don't know 😅" },
   { kind: "me", text: "Same here tbh. Let's just use TrustLayer 👇" },
   { kind: "deal" },
-  { kind: "system", text: "Buyer paid $420 — funds secured in the vault 🔒" },
+  { kind: "system", text: "Buyer paid $420 - funds secured in the vault 🔒" },
   { kind: "me", text: "Perfect, shipping it out today 🚚" },
   { kind: "system", text: "Delivered · Buyer confirmed the item ✅" },
   { kind: "system", text: "$420 released to seller 🎉" },
@@ -57,7 +57,7 @@ export function InActionSection() {
             align="left"
             eyebrow="TrustLayer in action"
             title="It fits right into the chat you're already in."
-            subtitle="No leaving the conversation, no awkward bank transfers. Drop a TrustLayer link and the whole deal happens safely — right where you found it."
+            subtitle="No leaving the conversation, no awkward bank transfers. Drop a TrustLayer link and the whole deal happens safely - right where you found it."
           />
           <ul className="mt-8 space-y-4">
             {[

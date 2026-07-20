@@ -29,12 +29,12 @@ export function HowItWorksSection() {
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"])
 
   return (
-    <section id="how-it-works" className="bg-background py-24">
+    <section id="how-it-works" className="bg-background py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-[1200px] px-6">
         <SectionHeading
           eyebrow="The flow"
           title="Six steps. Zero guesswork."
-          className="mb-20"
+          className="mb-12 md:mb-16 lg:mb-20"
         />
 
         <div ref={ref} className="relative">

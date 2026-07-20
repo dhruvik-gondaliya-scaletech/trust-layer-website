@@ -39,13 +39,13 @@ export function EscrowDemoSection() {
   const fundsInVault = phase >= 1 && phase < 4
 
   return (
-    <section id="demo" className="bg-secondary/40 py-24">
+    <section id="demo" className="bg-secondary/40 py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-[1200px] px-6">
         <SectionHeading
           eyebrow="LIVE PAYMENT PROTECTION DEMO"
           title="See exactly how your money is protected."
           subtitle="No sign-up. Just tap through a real deal and watch where the money goes."
-          className="mb-16"
+          className="mb-10 md:mb-12 lg:mb-16"
         />
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-center">

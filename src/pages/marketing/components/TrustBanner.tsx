@@ -6,9 +6,9 @@ export function TrustBanner() {
   const row = [...BRANDS, ...BRANDS]
 
   return (
-    <section className="border-y border-border/60 bg-secondary/40 py-10">
+    <section className="border-y border-border/60 bg-secondary/40 py-6 md:py-8 lg:py-10">
       <div className="mx-auto max-w-[1200px] px-6">
-        <Reveal className="mb-7 text-center">
+        <Reveal className="mb-5 md:mb-6 lg:mb-7 text-center">
           <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
             Protecting deals from the platforms you already use
           </p>

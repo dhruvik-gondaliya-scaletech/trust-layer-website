@@ -3,14 +3,6 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { ShieldCheck, ArrowRight, Play, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from "@/components/ui/dialog"
 import { Magnetic, CountUp } from "../lib/primitives"
 import { BRANDS } from "../lib/brands"
 import { LiveEscrowJourney } from "./LiveEscrowJourney"
@@ -63,7 +55,7 @@ export function HeroSection() {
   return (
     <section
       onMouseMove={handleMouse}
-      className="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24"
+      className="relative overflow-hidden pt-24 pb-12 md:pt-32 md:pb-16 lg:pt-36 lg:pb-20"
     >
       {/* ambient gradient blobs */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
@@ -141,29 +133,32 @@ export function HeroSection() {
               </Button>
             </Magnetic>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="group h-14 gap-2 px-6 text-base font-semibold"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                    <Play className="h-3.5 w-3.5 fill-current" />
-                  </span>
-                  Watch How It Works
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-[520px] border-none bg-transparent p-0 shadow-none">
-                <DialogHeader className="sr-only">
-                  <DialogTitle>How TrustLayer works</DialogTitle>
-                  <DialogDescription>
-                    An animated walkthrough of a protected payment transaction.
-                  </DialogDescription>
-                </DialogHeader>
-                <LiveEscrowJourney interval={2200} className="mx-auto" />
-              </DialogContent>
-            </Dialog>
+            <Button
+              variant="outline"
+              size="lg"
+              asChild
+              className="group h-14 gap-2 px-6 text-base font-semibold"
+            >
+              <a
+                href="#how-it-works"
+                onClick={(e) => {
+                  e.preventDefault()
+                  const el = document.getElementById("how-it-works")
+                  if (el) {
+                    window.scrollTo({
+                      top: el.offsetTop - 80,
+                      behavior: "smooth",
+                    })
+                    window.history.pushState(null, "", "#how-it-works")
+                  }
+                }}
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                </span>
+                Watch How It Works
+              </a>
+            </Button>
           </div>
 
           {/* live trust counter */}
@@ -186,7 +181,7 @@ export function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Right column — live journey with floating marketplace logos */}
+        {/* Right column - live journey with floating marketplace logos */}
         <div className="relative mx-auto flex w-full max-w-[500px] items-center justify-center">
           {/* floating brand logos */}
           {FLOAT_POS.map((pos, i) => {

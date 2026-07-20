@@ -97,7 +97,7 @@ export function TrustFeaturesSection() {
             align="left"
             eyebrow="Security"
             title="Fortified from every angle."
-            subtitle="TrustLayer wraps each deal in layers of verification, encryption and oversight — so nothing slips through."
+            subtitle="TrustLayer wraps each deal in layers of verification, encryption and oversight - so nothing slips through."
           />
           <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {CHECKLIST.map((item, i) => (

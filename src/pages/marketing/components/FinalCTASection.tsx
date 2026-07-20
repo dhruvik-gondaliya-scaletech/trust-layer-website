@@ -17,7 +17,7 @@ export function FinalCTASection() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-violet-700 py-28 text-white">
+    <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-violet-700 py-16 md:py-20 lg:py-24 text-white">
       {/* moving glow blobs */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-20 top-0 h-80 w-80 rounded-full bg-white/10 blur-3xl animate-blob-drift" />

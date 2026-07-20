@@ -18,7 +18,7 @@ const STEPS = [
   { label: "Seller ships the package", actor: "ship" },
   { label: "Buyer confirms delivery", actor: "confirm" },
   { label: "Funds released to seller", actor: "money-out" },
-  { label: "Deal complete — everyone safe", actor: "done" },
+  { label: "Deal complete - everyone safe", actor: "done" },
 ] as const
 
 const CONFETTI = Array.from({ length: 16 }, (_, i) => {

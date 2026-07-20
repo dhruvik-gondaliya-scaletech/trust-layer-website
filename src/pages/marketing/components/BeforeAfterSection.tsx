@@ -19,12 +19,12 @@ const WITH = [
 
 export function BeforeAfterSection() {
   return (
-    <section className="bg-background py-24">
+    <section id="comparison" className="bg-background py-12 md:py-16 lg:py-20">
       <div className="mx-auto max-w-[1100px] px-6">
         <SectionHeading
           eyebrow="The difference"
           title="Paying directly vs. paying with TrustLayer"
-          className="mb-16"
+          className="mb-10 md:mb-12 lg:mb-16"
         />
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
